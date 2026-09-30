@@ -23,6 +23,7 @@ body {
 /* Main Container Card */
 .portal-card {
   width: 100%;
+  height: 40rem;
   max-width: 1060px;
   background-color: #ffffff;
   border-radius: 26px;
@@ -290,26 +291,6 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.node-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  border-radius: 9999px;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  font-size: 11px;
-  font-weight: 500;
-  color: #475569;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #10b981;
-}
-
 /* Form Titles */
 .form-title {
   font-size: 1.5rem;
@@ -484,9 +465,9 @@ body {
 }
 
 /* Footer & Compliance Grid */
-.footer-section {
+/* .footer-section {
   margin-top: 2rem;
-}
+} */
 
 .audit-grid {
   display: grid;
