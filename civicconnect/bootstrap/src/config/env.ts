@@ -26,3 +26,4 @@ export const env = {
   sessionSecret: required("SESSION_SECRET"),
   sessionCookieSecure: (process.env.SESSION_COOKIE_SECURE ?? "true") === "true",
 };
+
