@@ -6,7 +6,7 @@
 // intentionally does not contain business logic itself.
 
 import express, { Express } from "express";
-import { healthRouter } from "./routes/health.route";
+import { healthRouter } from "./api/health.route";
 
 export function createApp(): Express {
   const app = express();
