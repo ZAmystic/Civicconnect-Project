@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <title>CivicConnect - New Resident Registration</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/registration.css" />
+</head>
+<body>
+  <main class="portal-card">
+
+    <!-- LEFT PANEL (identical on both pages) -->
+    <section class="left-panel">
+      <div>
+        <div class="brand-header">
+          <div class="brand-icon-box">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="stroke-width:2.2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title">CivicConnect</div>
+            <div class="brand-subtitle">Metropolitan Portal</div>
+          </div>
+        </div>
+
+        <h1 class="hero-headline">Public services,<br />seamlessly<br />coordinated.</h1>
+        <p class="hero-description">
+          Secure municipal infrastructure coordinating community incident tracking, field dispatch, and neighborhood development.
+        </p>
+      </div>
+
+      <div class="security-banner">
+        <div class="security-details">
+          <div class="security-icon-box">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="color:#67e8f9">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              <path d="m9 12 2 2 4-4"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="security-title">Authentication</div>
+            <div class="security-sub">SSH secured</div>
+          </div>
+        </div>
+        <svg class="svg-icon small" viewBox="0 0 24 24" style="color:#67e8f9">
+          <rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <section class="right-panel">
+      <div class="tab-group">
+        <a class="tab-button" href="login.html" data-nav="back">Sign In</a>
+        <a class="tab-button active" href="registration.html" aria-current="page" data-nav="forward">Register</a>
+      </div>
+
+      <div class="view">
+        <h2 class="form-title">Create your CivicConnect Account</h2>
+        <p class="form-subtitle">Access municipal services, submit community requests, and track local initiatives.</p>
+
+        <form class="auth-form" onsubmit="event.preventDefault();">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="input-label" for="first-name">First Name</label>
+              <div class="input-container">
+                <svg class="input-icon svg-icon" viewBox="0 0 24 24">
+                    <path d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                    <circle cx="10" cy="7" r="4"></circle>
+                  </svg>
+                <input class="text-input" id="first-name" name="firstName" type="text" placeholder="Clara" required />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="input-label" for="last-name">Last Name</label>
+              <div class="input-container">
+                <svg class="input-icon svg-icon" viewBox="0 0 24 24">
+                    <path d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                    <circle cx="10" cy="7" r="4"></circle>
+                  </svg>
+                <input class="text-input" id="last-name" name="lastName" type="text" placeholder="Morales" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="input-label" for="reg-email">Account Email</label>
+            <div class="input-container">
+              <svg class="input-icon svg-icon" viewBox="0 0 24 24">
+                    <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                  </svg>
+              <input class="text-input" id="reg-email" name="email" type="email" placeholder="clara.morales@citizen.gov" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="input-label" for="reg-password">Password</label>
+              <div class="input-container">
+                <svg class="input-icon svg-icon" viewBox="0 0 24 24">
+                    <rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                <input class="text-input has-toggle" id="reg-password" name="password" type="password" placeholder="••••••••••••" required />
+                <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                  <svg class="svg-icon" viewBox="0 0 24 24">
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="input-label" for="confirm-password">Confirm Password</label>
+              <div class="input-container">
+                <svg class="input-icon svg-icon" viewBox="0 0 24 24">
+                    <rect height="11" rx="2" ry="2" width="18" x="3" y="11"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                <input class="text-input has-toggle" id="confirm-password" name="confirmPassword" type="password" placeholder="••••••••••••" required />
+                <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                  <svg class="svg-icon" viewBox="0 0 24 24">
+                      <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                      <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                    </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="checkbox-section">
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" required />
+              <span>I agree to the <a class="inline-link" href="#">Terms of Service</a> &amp; <a class="inline-link" href="#">Privacy Policy</a></span>
+            </label>
+            <label class="checkbox-label">
+              <input class="checkbox-input" type="checkbox" checked />
+              <span>Enable 2-Step Resident Verification via mobile device</span>
+            </label>
+          </div>
+
+          <button class="submit-button" type="submit">
+            <span>Complete Registration</span>
+            <svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+          </button>
+
+          <p class="switch-text">
+            Already have an account?
+            <a class="switch-link" href="login.html" data-nav="back">Sign In</a>
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="/src/assets/js/transition.js"></script>
+</body>
+</html>

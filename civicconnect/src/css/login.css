@@ -1,0 +1,304 @@
+/* CivicConnect - Sign In page styles */
+/* Reset & base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: radial-gradient(circle at 80% 50%, #e6faf7 0%, #edf4fc 45%, #e9edf8 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  color: #1e293b;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { text-decoration: none; color: inherit; }
+input, button { font-family: inherit; }
+
+/* Card: fixed size on desktop so it never changes between views */
+.portal-card {
+  width: 100%;
+  max-width: 1060px;
+  background: #ffffff;
+  border-radius: 26px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.12);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .portal-card { flex-direction: row; height: 680px; }
+}
+
+/* Left panel */
+.left-panel {
+  width: 100%;
+  background: #1259e8;
+  color: #ffffff;
+  padding: 2.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .left-panel { width: 41%; flex-shrink: 0; padding: 2.75rem; }
+}
+
+.brand-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2.5rem; }
+
+.brand-icon-box {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+}
+
+.brand-title { font-weight: 700; font-size: 1.125rem; line-height: 1.2; }
+
+.brand-subtitle {
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  color: #dbeafe;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.hero-headline { font-size: 1.875rem; font-weight: 700; line-height: 1.25; margin-bottom: 0.75rem; }
+
+.hero-description {
+  color: rgba(219, 234, 254, 0.85);
+  font-size: 13px;
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+.security-banner {
+  background: rgba(13, 68, 181, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.75rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+
+.security-details { display: flex; align-items: center; gap: 0.625rem; }
+
+.security-icon-box {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex; align-items: center; justify-content: center;
+}
+
+.security-title { font-size: 11px; font-weight: 600; }
+.security-sub { font-size: 10px; color: #bfdbfe; }
+
+/* Right panel */
+.right-panel {
+  width: 100%;
+  background: #ffffff;
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  .right-panel { padding: 2.5rem 3rem; }
+}
+
+/* Tabs */
+.tab-group {
+  align-self: flex-start;
+  display: inline-flex;
+  padding: 4px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.tab-button {
+  display: inline-block;
+  padding: 5px 16px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  border-radius: 6px;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.tab-button:hover { color: #0f172a; }
+
+.tab-button.active {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Page transition: only the form content animates, the card and left panel stay put */
+.view { animation: view-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.view.enter-back { animation-name: view-in-back; }
+.view.leaving { animation: view-out 0.22s ease-in forwards; }
+.view.leaving.to-back { animation-name: view-out-back; }
+
+@keyframes view-in      { from { opacity: 0; transform: translateX(24px); }  to { opacity: 1; transform: none; } }
+@keyframes view-in-back { from { opacity: 0; transform: translateX(-24px); } to { opacity: 1; transform: none; } }
+@keyframes view-out      { to { opacity: 0; transform: translateX(-24px); } }
+@keyframes view-out-back { to { opacity: 0; transform: translateX(24px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .view, .view.leaving { animation: none !important; }
+}
+
+.form-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  margin-bottom: 0.25rem;
+}
+
+.form-subtitle { font-size: 13px; color: #64748b; margin-bottom: 1.25rem; }
+
+/* Forms */
+.auth-form { display: flex; flex-direction: column; gap: 0.875rem; }
+
+.form-group { display: flex; flex-direction: column; }
+
+.input-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.375rem;
+}
+
+.label-wrapper {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 0.375rem;
+}
+.label-wrapper .input-label { margin-bottom: 0; }
+
+.forgot-link { font-size: 12px; font-weight: 500; color: #1d63ed; }
+.forgot-link:hover { text-decoration: underline; }
+
+.input-container { position: relative; width: 100%; }
+
+.input-icon {
+  position: absolute;
+  left: 0.75rem; top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.text-input {
+  width: 100%;
+  padding: 0.625rem 0.75rem 0.625rem 2.25rem;
+  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.text-input::placeholder { color: #94a3b8; }
+
+.text-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.text-input[type="password"] { letter-spacing: 0.08em; }
+.text-input.has-toggle { padding-right: 2.5rem; }
+
+.toggle-password {
+  position: absolute;
+  right: 0.75rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none; padding: 0;
+  display: flex;
+  color: #94a3b8;
+  cursor: pointer;
+}
+.toggle-password:hover { color: #475569; }
+
+/* Options / checkbox / badge */
+.form-options {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 0.5rem;
+}
+
+.checkbox-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+}
+
+.checkbox-input { width: 16px; height: 16px; accent-color: #1d63ed; flex-shrink: 0; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 0.375rem;
+  font-size: 11px;
+  font-weight: 600;
+  color: #047857;
+  background: rgba(236, 253, 245, 0.8);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(167, 243, 208, 0.5);
+}
+.badge .svg-icon { color: #059669; stroke-width: 2.5; }
+
+/* Submit */
+.submit-button {
+  width: 100%;
+  background: #0a4dd6;
+  color: #ffffff;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(10, 77, 214, 0.28);
+  transition: background-color 0.15s ease;
+  margin-top: 0.25rem;
+}
+.submit-button:hover { background: #0840b8; }
+.submit-button:active { background: #083ca8; }
+
+.switch-text { text-align: center; font-size: 13px; color: #64748b; }
+.switch-link { color: #1d63ed; font-weight: 600; }
+.switch-link:hover { text-decoration: underline; }
+
+/* SVG helpers */
+.svg-icon {
+  width: 16px; height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+.svg-icon.small { width: 14px; height: 14px; }
