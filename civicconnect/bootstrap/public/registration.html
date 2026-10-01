@@ -60,7 +60,133 @@
         </svg>
       </div>
     </section>
-    </main>
-  
+    <!-- Right Column: Form Section -->
+    <section class="right-panel">
+      
+      <div class="tabs-wrapper">
+        <div class="tabs">
+          <a href="#" class="tab">Sign In</a>
+          <button type="button" class="tab active">New Resident Registration</button>
+        </div>
+      </div>
+
+      <div class="form-header">
+        <h2 class="form-title">Create your CivicConnect Account</h2>
+        <p class="form-subtitle">Access municipal services, submit community requests, and track local initiatives.</p>
+      </div>
+
+      <form class="form-container" onsubmit="event.preventDefault();">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="first-name">First Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="10" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+              </svg>
+              <input type="text" id="first-name" class="form-control" name="firstName" placeholder="Clara" required />
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="last-name">Last Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="10" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"></circle>
+              </svg>
+              <input type="text" id="last-name" class="form-control" name="lastName" placeholder="Morales" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Account Email</label>
+          <div class="input-wrapper">
+            <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+            <input type="email" id="email" class="form-control" name="email" value="clara.morales@citizen.gov" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect height="11" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" width="18" x="3" y="11"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <input type="password" id="password" class="form-control" name="password" placeholder="••••••••••••••••" required />
+              <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="confirm-password">Confirm Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <rect height="11" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" width="18" x="3" y="11"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <input type="password" id="confirm-password" class="form-control" name="confirmPassword" placeholder="••••••••••••••••" required />
+              <button type="button" class="toggle-password" aria-label="Toggle password visibility">
+                <svg style="width: 1rem; height: 1rem;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="checkbox-section">
+          <div class="checkbox-row">
+            <label class="checkbox-label">
+              <input type="checkbox" checked required />
+              <span>I agree to the <a href="#">Metropolitan Terms of Service</a> & <a href="#">Privacy Policy</a></span>
+            </label>
+            
+            <div class="badge-encryption">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+              <span>Encryption Validated</span>
+            </div>
+          </div>
+          
+          <div class="checkbox-row">
+            <label class="checkbox-label">
+              <input type="checkbox" checked />
+              <span>Enable 2-Step Resident Verification via mobile device</span>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn">
+          <span>Complete Registration</span>
+          <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+        </button>
+
+        <p class="signin-redirect">
+          Already have an account? 
+          <a href="#">Sign In</a>
+        </p>
+
+      </form>
+    </section>
+  </main>
 </body>
 </html>
+
+
