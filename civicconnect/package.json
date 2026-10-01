@@ -15,5 +15,6 @@
   "dependencies": {
     "dotenv": "^18.0.5",
     "pg": "^8.23.1"
+    "ts-zxcvbn": "^7.0.2"
   }
 }
