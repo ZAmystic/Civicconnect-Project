@@ -144,6 +144,10 @@ npm run dev
 # Compile TypeScript and start production server
 npm run build
 npm start
+
+git config --unset-all remote.upstream.fetch
+git config --add remote.upstream.fetch "+refs/heads/:refs/remotes/upstream/"
+
 ```
 
 ---
