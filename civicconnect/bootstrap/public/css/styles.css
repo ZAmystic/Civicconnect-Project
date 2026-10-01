@@ -156,45 +156,6 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.role-button:hover {
-  background-color: #f8fafc;
-}
-
-.role-button:hover .arrow-icon {
-  transform: translateX(2px);
-  color: #1d63ed;
-}
-
-.role-info {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.role-icon-box {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background-color: #eff6ff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #1d63ed;
-}
-
-.role-name {
-  font-size: 12px;
-  font-weight: 600;
-  color: #0f172a;
-  line-height: 1.2;
-}
-
-.role-email {
-  font-size: 11px;
-  color: #64748b;
-  line-height: 1.2;
-}
-
 .arrow-icon {
   width: 16px;
   height: 16px;
@@ -247,7 +208,7 @@ body {
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   background-color: #ffffff;
 }
 
@@ -440,6 +401,13 @@ body {
   border: 1px solid rgba(167, 243, 208, 0.5);
 }
 
+.Sign-up {
+  font-size: 13px;
+  color: #475569;
+  margin-top: 1rem;
+}
+
+
 /* Submit Button */
 .submit-button {
   width: 100%;
@@ -464,50 +432,7 @@ body {
   background-color: #0840b8;
 }
 
-/* Footer & Compliance Grid */
-/* .footer-section {
-  margin-top: 2rem;
-} */
 
-.audit-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  background-color: #f8fafc;
-  border: 1px solid rgba(226, 232, 240, 0.7);
-  border-radius: 12px;
-  padding: 0.75rem 0.5rem;
-  text-align: center;
-}
-
-.audit-item {
-  border-right: 1px solid #e2e8f0;
-}
-
-.audit-item:last-child {
-  border-right: none;
-}
-
-.audit-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1.2;
-}
-
-.audit-sub {
-  font-size: 10px;
-  color: #64748b;
-  font-weight: 500;
-}
-
-.legal-notice {
-  text-align: center;
-  font-size: 10px;
-  color: #64748b;
-  margin-top: 1rem;
-  line-height: 1.5;
-  padding: 0 0.5rem;
-}
 
 /* SVG Helpers */
 .svg-icon {
