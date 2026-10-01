@@ -132,6 +132,12 @@ CONTRACTOR_API_KEY=MOCK_VENDOR_KEY
 
 ### 4. Running the API Gateway
 ```bash
+# Open the folder for civicconnect
+cd civicconnect
+
+# Install all depedencys
+npm install
+
 # Run in development mode with hot reload
 npm run dev
 
