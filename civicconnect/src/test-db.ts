@@ -1,9 +1,12 @@
-import { dbPool } from './config/database'; // Adjust path if your pool is in another file
+
+declare const process: any;
+
+import { dbPool } from './config/database'; 
 
 async function testConnection() {
   try {
     const client = await dbPool.connect();
-    console.log('Connected successfully to Supabase PostgreSQL!');
+    console.log('✅ Connected successfully to Supabase PostgreSQL!');
     
     // Run a lightweight test query 
     const result = await client.query('SELECT NOW(), current_database(), current_user;');
@@ -17,7 +20,8 @@ async function testConnection() {
       FROM information_schema.tables 
       WHERE table_schema = 'public'; 
     `);
-    console.log('📋 Existing Tables:', tableResult.rows.map(row => row.table_name));
+    
+    console.log('📋 Existing Tables:', tableResult.rows.map((row: { table_name: string }) => row.table_name));
     
     client.release();
     process.exit(0);
