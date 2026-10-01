@@ -20,6 +20,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
 /* Main Container Card */
 .portal-card {
   width: 100%;
@@ -104,63 +109,6 @@ body {
   line-height: 1.6;
   margin-bottom: 2rem;
   max-width: 340px;
-}
-
-/* Role Simulation Section */
-.role-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.role-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: #dbeafe;
-}
-
-.demo-badge {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #bfdbfe;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.role-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.role-button {
-  width: 100%;
-  background-color: #ffffff;
-  color: #1e293b;
-  padding: 0.625rem 0.875rem;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background-color 0.15s ease, transform 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.arrow-icon {
-  width: 16px;
-  height: 16px;
-  color: #94a3b8;
-  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 /* Security Banner */
@@ -250,6 +198,12 @@ body {
   color: #0f172a;
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+#sign-up {
+  color: #1d63ed;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 /* Form Titles */
