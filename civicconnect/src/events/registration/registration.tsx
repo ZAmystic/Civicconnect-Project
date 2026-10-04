@@ -2,7 +2,7 @@ import zxcvbn from "ts-zxcvbn";
 
 // Minimum strength score for a password to be considered viable
 // Add to settings.json if you want to change this value
-const MinimumViablePasswordStrength = 3; 
+const MinimumViablePasswordStrength = 3;
 
 //----------------------------------------------------------------------------
 // Events
@@ -27,15 +27,12 @@ export async function analyse_password(password: string) {
         console.error("zxcvbn classified the password as too weak : " + zxcvbn(password).feedback.warning + ".");
         return false;
     }
-    else
-    {
-        try
-        {
+    else {
+        try {
             const hashed_password = await hash_password(password);
             console.log("Status Code 200: Password hashed successfully.");
-        } 
-        catch (error) 
-        {
+        }
+        catch (error) {
             console.error("An error occurred while hashing password:", error);
             return false;
         }
