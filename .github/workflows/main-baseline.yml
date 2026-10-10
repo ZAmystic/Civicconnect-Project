@@ -1,0 +1,62 @@
+name: Main Baseline
+
+# Post-merge pipeline: runs when a PR is squash-merged into main
+on:
+  push:
+    branches: [main]
+
+# Never run two baselines at once on main
+concurrency:
+  group: main-baseline
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # required to push the release-candidate tag
+
+jobs:
+  baseline:
+    name: baseline
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Regression tests
+        run: npm test
+
+      - name: Package release candidate
+        run: npm pack
+
+      - name: Upload release-candidate artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate
+          path: "*.tgz"
+          retention-days: 30
+
+      - name: Compute release-candidate tag
+        id: version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          echo "tag=v${BASE}-rc.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Tag release candidate
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
