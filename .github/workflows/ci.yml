@@ -14,13 +14,18 @@ concurrency:
 permissions:
   contents: read
 
+# The app lives in the civicconnect/ subfolder, so every `run:` step starts there
+defaults:
+  run:
+    working-directory: civicconnect
+
 jobs:
   # ---------------------------------------------------------------
   # Job 1: offline checks (mocks + dummy env values, no real secrets)
   # ---------------------------------------------------------------
   verify:
     name: verify
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       NODE_ENV: test
@@ -36,15 +41,16 @@ jobs:
 
     steps:
       - name: Checkout (full history for secret scanning)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
+          cache-dependency-path: civicconnect/package-lock.json
 
       - name: Install dependencies (deterministic, from package-lock.json)
         run: npm ci
@@ -75,7 +81,7 @@ jobs:
   smoke:
     name: smoke
     needs: verify
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     # Secrets are not available to PRs from forks, so skip there.
     if: github.event.pull_request.head.repo.full_name == github.repository
@@ -95,13 +101,14 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
+          cache-dependency-path: civicconnect/package-lock.json
 
       - name: Install dependencies
         run: npm ci
