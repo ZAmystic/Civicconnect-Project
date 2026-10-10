@@ -1,1 +1,76 @@
+name: Main Baseline
 
+# Post-merge pipeline: runs when a PR is squash-merged into main
+on:
+  push:
+    branches: [main]
+
+# Never run two baselines at once on main
+concurrency:
+  group: main-baseline
+  cancel-in-progress: false
+
+permissions:
+  contents: write   # required to push the release-candidate tag
+
+# The app lives in the civicconnect/ subfolder, so every `run:` step starts there
+defaults:
+  run:
+    working-directory: civicconnect
+
+jobs:
+  baseline:
+    name: baseline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NODE_ENV: test
+      VITE_SUPABASE_URL: http://localhost:54321
+      VITE_SUPABASE_ANON_KEY: dummy-anon-key
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: civicconnect/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (tsc + vite build)
+        run: npm run build
+
+      - name: Check the built login page links its CSS and JS
+        run: |
+          grep -Eq 'assets/[^"]+\.css' dist/src/pages/login.html \
+            || { echo "::error::login.html has no CSS bundle (blank-page build)"; exit 1; }
+          grep -Eq 'assets/[^"]+\.js' dist/src/pages/login.html \
+            || { echo "::error::login.html has no JS bundle (blank-page build)"; exit 1; }
+
+      - name: Regression tests
+        run: npm test
+
+      - name: Upload release-candidate artifact (the built site)
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-candidate
+          path: civicconnect/dist
+          retention-days: 30
+
+      - name: Compute release-candidate tag
+        id: version
+        run: |
+          BASE=$(node -p "require('./package.json').version")
+          echo "tag=v${BASE}-rc.${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Tag release candidate
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
