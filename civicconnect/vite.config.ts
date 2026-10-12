@@ -1,7 +1,4 @@
 
-// import { defineConfig } from "vite";
-
-
 import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 import { readdirSync } from "node:fs";
@@ -38,14 +35,6 @@ function rootRedirect(): Plugin {
   };
 }
 
-// export default defineConfig({
-//   plugins: [rootRedirect()],
-//   build: {
-//     rollupOptions: {
-//       input: pages,
-//     },
-//   },
-// });
 export default defineConfig({
    plugins: [rootRedirect()],
   build: {

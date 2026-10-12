@@ -2,14 +2,6 @@
 interface LoginResponse {
     success: boolean;
     message: string;
-    user?: {
-        user_id: number;
-        full_name: string;
-        full_surname: string | null;
-        account_status: boolean | string;
-        email: string;
-        role: string;
-    };
 }
 
 const loginForm = document.querySelector<HTMLFormElement>(
@@ -66,8 +58,6 @@ loginForm?.addEventListener("submit", async (event) => {
             showLoginMessage(data.message || "Login failed.");
             return;
         }
-
-        console.log("Authenticated user:", data.user);
 
         // Redirect after successful authentication
         window.location.assign("/src/pages/dashboard.html");

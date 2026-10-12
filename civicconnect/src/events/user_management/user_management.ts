@@ -30,17 +30,27 @@ function getAccountStatusLabel(status: boolean | string): "Active" | "Inactive" 
 }
 
 function updateUserAnalytics(userList: User[]): void {
-    const activeUsers = userList.filter(
-        (user) => getAccountStatusLabel(user.account_status) === "Active"
-    ).length;
+    const counts = userList.reduce(
+        (totals, user) => {
+            if (getAccountStatusLabel(user.account_status) === "Active") {
+                totals.active += 1;
+            }
+            if (user.role === "Contractor") {
+                totals.contractors += 1;
+            }
+            if (user.role === "Staff" || user.role === "Manager") {
+                totals.staffAndManagers += 1;
+            }
+            return totals;
+        },
+        { active: 0, contractors: 0, staffAndManagers: 0 }
+    );
     const metrics: Record<string, number> = {
         totalUserMetric: userList.length,
-        activeUserMetric: activeUsers,
-        inactiveUserMetric: userList.length - activeUsers,
-        contractorUserMetric: userList.filter((user) => user.role === "Contractor").length,
-        staffManagerUserMetric: userList.filter(
-            (user) => user.role === "Staff" || user.role === "Manager"
-        ).length
+        activeUserMetric: counts.active,
+        inactiveUserMetric: userList.length - counts.active,
+        contractorUserMetric: counts.contractors,
+        staffManagerUserMetric: counts.staffAndManagers
     };
 
     for (const [id, value] of Object.entries(metrics)) {
@@ -204,6 +214,7 @@ function displayUsers(userList: User[]): void {
     }
 
     userList.forEach((user: User) => {
+        const status = getAccountStatusLabel(user.account_status);
         const row = document.createElement("tr");
         row.classList.add("user-row");
         row.tabIndex = 0;
@@ -221,7 +232,7 @@ function displayUsers(userList: User[]): void {
             user.user_id,
             user.full_name,
             user.full_surname ?? "",
-            getAccountStatusLabel(user.account_status),
+            status,
             user.email,
             user.role
         ];
@@ -230,7 +241,6 @@ function displayUsers(userList: User[]): void {
             const cell = document.createElement("td");
 
             if (index === 3) {
-                const status = getAccountStatusLabel(user.account_status);
                 const badge = document.createElement("span");
                 badge.className = `user-status ${status.toLowerCase()}`;
                 badge.textContent = status;

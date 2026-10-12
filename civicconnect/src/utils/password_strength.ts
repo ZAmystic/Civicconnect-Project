@@ -8,7 +8,7 @@ export interface PasswordStrengthAssessment {
 export async function assessPasswordStrength(
     password: string
 ): Promise<PasswordStrengthAssessment> {
-    const response = await fetch("/site-config.json");
+    const response = await fetch("/api/settings/public");
     if (!response.ok) {
         throw new Error(
             `Failed to load site config: ${response.status} ${response.statusText}`
@@ -19,12 +19,15 @@ export async function assessPasswordStrength(
     if (
         typeof config !== "object" ||
         config === null ||
-        !("minimum_password_strength_level" in config)
+        !("security" in config) ||
+        typeof config.security !== "object" ||
+        config.security === null ||
+        !("minimum_password_strength_level" in config.security)
     ) {
-        throw new Error("Site config is missing minimum_password_strength_level.");
+        throw new Error("Site config is missing security.minimum_password_strength_level.");
     }
 
-    const minimumStrength = config.minimum_password_strength_level;
+    const minimumStrength = config.security.minimum_password_strength_level;
     if (
         typeof minimumStrength !== "number" ||
         !Number.isInteger(minimumStrength) ||
@@ -32,7 +35,7 @@ export async function assessPasswordStrength(
         minimumStrength > 4
     ) {
         throw new Error(
-            "minimum_password_strength_level in site config must be an integer from 0 to 4."
+            "security.minimum_password_strength_level in site config must be an integer from 0 to 4."
         );
     }
 

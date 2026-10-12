@@ -11,7 +11,6 @@ export const dbPool = new Pool({
 });
 
 // Quick connection test
-// Quick connection test
 dbPool.connect((err, client) => {
   if (err) {
     console.error('❌ Error connecting to Supabase PostgreSQL database:', err.stack);

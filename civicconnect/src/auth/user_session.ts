@@ -1,9 +1,10 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import type { Request, Response } from "express";
 import { dbPool } from "../config/database";
 
 const cookieName = "civicconnect_session";
-const sessionLifetimeSeconds = 8 * 60 * 60;
+const configPath = new URL("../../public/site-config.json", import.meta.url);
 const configuredSecret = process.env.SESSION_SECRET;
 
 if (!configuredSecret && process.env.NODE_ENV === "production") {
@@ -31,7 +32,31 @@ function sign(payload: string): Buffer {
     return createHmac("sha256", sessionSecret).update(payload).digest();
 }
 
-export function setUserSession(res: Response, userId: number): void {
+async function getSessionLifetimeSeconds(): Promise<number> {
+    const config: unknown = JSON.parse(await readFile(configPath, "utf8"));
+    if (
+        typeof config !== "object" ||
+        config === null ||
+        !("security" in config) ||
+        typeof config.security !== "object" ||
+        config.security === null ||
+        !("session_timeout_minutes" in config.security) ||
+        typeof config.security.session_timeout_minutes !== "number" ||
+        !Number.isSafeInteger(config.security.session_timeout_minutes) ||
+        config.security.session_timeout_minutes <= 0
+    ) {
+        throw new Error("Session timeout configuration is invalid.");
+    }
+
+    const lifetimeSeconds = config.security.session_timeout_minutes * 60;
+    if (!Number.isSafeInteger(lifetimeSeconds)) {
+        throw new Error("Session timeout configuration is too large.");
+    }
+    return lifetimeSeconds;
+}
+
+export async function setUserSession(res: Response, userId: number): Promise<void> {
+    const sessionLifetimeSeconds = await getSessionLifetimeSeconds();
     const payload = Buffer.from(
         JSON.stringify({
             userId,
@@ -44,6 +69,14 @@ export function setUserSession(res: Response, userId: number): void {
     res.setHeader(
         "Set-Cookie",
         `${cookieName}=${payload}.${signature}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${sessionLifetimeSeconds}${secure}`
+    );
+}
+
+export function clearUserSession(res: Response): void {
+    const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+    res.setHeader(
+        "Set-Cookie",
+        `${cookieName}=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT${secure}`
     );
 }
 

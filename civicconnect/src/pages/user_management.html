@@ -21,6 +21,7 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/src/pages/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css" />
     <link rel="stylesheet" href="/src/pages/assets/css/user_management.css">
 </head>
 
@@ -107,7 +108,7 @@
           <span class="material-symbols-outlined">history</span>
           <span>Audit Logs</span>
         </a> -->
-                <a class="nav-item" href="#">
+                <a class="nav-item" id="settingsNav" href="settings.html" hidden>
                     <span class="material-symbols-outlined">settings</span>
                     <span>Settings</span>
                 </a>
@@ -353,6 +354,10 @@
 
             <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
             <div class="user-dialog-actions">
+                <button class="user-dialog-signout" id="accountSignOut" type="button">
+                    <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+                    Sign out
+                </button>
                 <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
                 <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
             </div>

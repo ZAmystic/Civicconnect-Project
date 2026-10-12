@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <title>CivicConnect Settings</title>
+
+    <!-- Fonts and Icons -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/src/pages/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css" />
+    <link rel="stylesheet" href="/src/pages/assets/css/user_management.css">
+    <link rel="stylesheet" href="/src/pages/assets/css/settings.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg" />
+                    <span class="logo-title">CivicConnect</span>
+                    <!-- <div class="brand-icon-box">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="stroke-width:2.2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>  
+          </div>
+          <span class="logo-title">CivicConnect</span> -->
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">Dashboards</span>
+                </div>
+                <a class="nav-item" id="requesterNav" href="dashboard.html">
+                    <span class="material-symbols-outlined">person</span>
+                    <span>Requester</span>
+                </a>
+                <!-- <a class="nav-item active" href="#">
+          <span class="material-symbols-outlined">inbox</span>
+          <span>Staff Queue</span>
+        </a>
+        <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+          <span class="material-symbols-outlined">analytics</span>
+          <span>Admin Executive</span>
+        </a> -->
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Service Requests</span>
+                </div>
+                <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">folder_open</span>
+          <span>All Requests</span>
+        </a> -->
+                <a class="nav-item" href="#">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <span>Create Ticket</span>
+                </a>
+                <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">fact_check</span>
+          <span>My Approvals</span>
+        </a> -->
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Operations</span>
+                </div>
+                <a class="nav-item" href="#">
+                    <span class="material-symbols-outlined">timer</span>
+                    <span>Workflow & SLA</span>
+                </a>
+                <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span>Departments</span>
+        </a> -->
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Intelligence</span>
+                </div>
+                <a class="nav-item" href="#">
+                    <span class="material-symbols-outlined">insights</span>
+                    <span>Reports & Analytics</span>
+                </a>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">Administration</span>
+                </div>
+                <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
+                    <span class="material-symbols-outlined">groups</span>
+                    <span>User Management</span>
+                </a>
+                <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">history</span>
+          <span>Audit Logs</span>
+        </a> -->
+                <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="system-status">
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <span class="status-text">System Version</span>
+                </div>
+                <span class="version-text">v0.0.1</span>
+            </div>
+        </div>
+    </aside>
+
+   <!-- Top Header -->
+        <header class="top-header">
+            <div class="search-container">
+                <span class="material-symbols-outlined search-icon">search</span>
+                <input class="search-input" placeholder="Search requests, ticket #, or citizens..." type="text" />
+            </div>
+
+            <div class="header-actions">
+                <a class="btn-primary" href="#">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>New Request</span>
+                </a>
+                <div class="vertical-divider"></div>
+
+                <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+                    <span class="avatar-container">
+                        <img alt="Profile" class="avatar-img"
+                            src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ace759f&is=6acd241f&hm=5399b014e4325c489f5ddbe529108ab2c3525a12d48608d45ae360595b90bed2&" />
+                        <span class="avatar-status"></span>
+                    </span>
+                    <span class="profile-info">
+                        <span class="profile-name">Loading...</span>
+                        <span class="profile-role"></span>
+                    </span>
+                </button>
+            </div>
+        </header>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-wrapper">
+        <main class="dashboard-content">
+            <div class="settings-page">
+                <header class="settings-heading">
+                    <div>
+                        <p class="settings-eyebrow">SYSTEM-WIDE CONFIGURATION</p>
+                        <h1>Settings</h1>
+                        <p class="settings-intro">Manage configuration that applies across the CivicConnect platform.</p>
+                    </div>
+                    <span class="settings-heading-icon material-symbols-outlined" aria-hidden="true">tune</span>
+                </header>
+
+                <p class="settings-access-message" id="settingsAccessMessage" role="status" aria-live="polite">
+                    Loading system configuration...
+                </p>
+
+                <div class="settings-columns" id="settingsLayout" hidden>
+                <div class="settings-main-column">
+                <section class="settings-grid" id="systemSettingsForm" aria-label="System-wide settings">
+                    <article class="settings-card settings-general-card">
+                        <div class="settings-card-icon general-icon">
+                            <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                        </div>
+                        <div class="settings-card-copy">
+                            <p class="settings-card-eyebrow">REFERENCE ONLY</p>
+                            <h2>General</h2>
+                            <p>These values describe the site and are stored for reference. They cannot be changed here.</p>
+                        </div>
+                        <dl class="settings-general-values">
+                            <div><dt>Site name</dt><dd id="generalSiteName"></dd></div>
+                            <div><dt>Description</dt><dd id="generalSiteDescription"></dd></div>
+                            <div><dt>Default language</dt><dd id="generalLanguage"></dd></div>
+                            <div><dt>Default timezone</dt><dd id="generalTimezone"></dd></div>
+                            <div><dt>Date format</dt><dd id="generalDateFormat"></dd></div>
+                        </dl>
+                    </article>
+
+                    <article class="settings-card settings-security-card">
+                        <div class="settings-card-icon security-icon">
+                            <span class="material-symbols-outlined" aria-hidden="true">shield_lock</span>
+                        </div>
+                        <div class="settings-card-copy">
+                            <p class="settings-card-eyebrow">SECURITY</p>
+                            <h2>Security</h2>
+                            <p>Control password strength and sign-in protections.</p>
+                        </div>
+                        <div class="settings-fields">
+                            <div class="settings-option">
+                                <label class="settings-field" for="minimumPasswordStrength">
+                                    Minimum password strength
+                                    <select id="minimumPasswordStrength">
+                                        <option value="0">0 — Any password strength</option>
+                                        <option value="1">1 — Weak</option>
+                                        <option value="2">2 — Fair</option>
+                                        <option value="3">3 — Good</option>
+                                        <option value="4">4 — Strong</option>
+                                    </select>
+                                </label>
+                                <small class="settings-field-help">New and changed passwords must meet at least this zxcvbn score.</small>
+                            </div>
+                            <div class="settings-option">
+                                <label class="settings-field settings-session-timeout" for="sessionTimeout">
+                                    Session timeout (minutes)
+                                    <input id="sessionTimeout" type="number" min="1" step="1" required>
+                                </label>
+                                <small class="settings-field-help">Users are automatically signed out after this time. Changes apply to new sign-ins.</small>
+                            </div>
+                            <div class="settings-option">
+                                <label class="settings-field" for="maxLoginAttempts">
+                                    Maximum login attempts
+                                    <input id="maxLoginAttempts" type="number" min="1" step="1" required>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>Failed-sign-in limits and automatic lockout are not active.</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="settings-card settings-users-card">
+                        <div class="settings-card-icon users-icon">
+                            <span class="material-symbols-outlined" aria-hidden="true">group</span>
+                        </div>
+                        <div class="settings-card-copy">
+                            <p class="settings-card-eyebrow">USERS</p>
+                            <h2>User settings</h2>
+                            <p>Set registration defaults and choose which profile actions are available.</p>
+                        </div>
+                        <div class="settings-fields">
+                            <div class="settings-option settings-user-role-option">
+                                <label class="settings-field" for="defaultUserRole">
+                                    Default user role
+                                    <select id="defaultUserRole">
+                                        <option value="Admin">Admin</option>
+                                        <option value="Manager">Manager</option>
+                                        <option value="Staff">Staff</option>
+                                        <option value="Citizen">Citizen</option>
+                                        <option value="Contractor">Contractor</option>
+                                    </select>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>This role is not currently applied to new accounts.</small>
+                            </div>
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="allowRegistration" type="checkbox">
+                                    <span>Allow user registration</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>Registration is not currently restricted by this option.</small>
+                            </div>
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="allowProfileEditing" type="checkbox">
+                                    <span>Allow users to edit their profiles</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>This option does not currently control self-service profile edits.</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="settings-card">
+                        <div class="settings-card-icon audit-icon">
+                            <span class="material-symbols-outlined" aria-hidden="true">history</span>
+                        </div>
+                        <div class="settings-card-copy">
+                            <p class="settings-card-eyebrow">AUDIT</p>
+                            <h2>Audit logging</h2>
+                            <p>Configure audit events and how long records are retained.</p>
+                        </div>
+                        <div class="settings-fields">
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="enableAuditLogging" type="checkbox">
+                                    <span>Enable audit logging</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>System activity is not currently recorded.</small>
+                            </div>
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="logFailedLoginAttempts" type="checkbox">
+                                    <span>Log failed login attempts</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>Unsuccessful sign-ins are not currently recorded.</small>
+                            </div>
+                            <div class="settings-option">
+                                <label class="settings-field" for="auditRetention">
+                                    Audit log retention (days)
+                                    <input id="auditRetention" type="number" min="1" step="1" required>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>Audit records are not automatically deleted after this period.</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="settings-card">
+                        <div class="settings-card-icon permissions-icon">
+                            <span class="material-symbols-outlined" aria-hidden="true">admin_panel_settings</span>
+                        </div>
+                        <div class="settings-card-copy">
+                            <p class="settings-card-eyebrow">ACCESS CONTROL</p>
+                            <h2>Permissions</h2>
+                            <p>Control whether staff may manage users or access system settings.</p>
+                        </div>
+                        <div class="settings-fields">
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="allowStaffUserManagement" type="checkbox">
+                                    <span>Allow staff user management</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>User management remains restricted to Admins and Managers.</small>
+                            </div>
+                            <div class="settings-option settings-toggle-group">
+                                <label class="settings-toggle">
+                                    <input id="allowStaffSettingsAccess" type="checkbox">
+                                    <span>Allow staff settings access</span>
+                                </label>
+                                <small class="settings-field-help"><span class="settings-feature-status">Not implemented</span>Settings access remains restricted to Admins and Managers.</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <div class="settings-form-actions">
+                        <p class="settings-save-message" id="settingsSaveMessage" role="status" aria-live="polite"></p>
+                        <button class="settings-action" id="saveSystemSettings" type="button">
+                            <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                            Save system settings
+                        </button>
+                    </div>
+                    </div>
+
+                    <div class="settings-side-column">
+                    <aside class="database-panel" aria-labelledby="databasePanelTitle">
+                        <div class="database-panel-heading">
+                            <span class="database-panel-icon material-symbols-outlined" aria-hidden="true">database</span>
+                            <div>
+                                <p class="settings-card-eyebrow">SYSTEM HEALTH</p>
+                                <h2 id="databasePanelTitle">Database</h2>
+                            </div>
+                        </div>
+                        <div class="database-status" id="databaseStatus" data-status="checking">
+                            <span class="database-status-dot" aria-hidden="true"></span>
+                            <span id="databaseStatusText">Checking connection...</span>
+                        </div>
+                        <p class="database-status-help">Shows whether the app can reach the database right now.</p>
+                        <dl class="database-details">
+                            <div>
+                                <div>
+                                    <dt>Engine</dt>
+                                    <dd>Database software used to store the app’s data.</dd>
+                                </div>
+                                <strong id="databaseEngine">PostgreSQL</strong>
+                            </div>
+                            <div>
+                                <div>
+                                    <dt>Connections in pool</dt>
+                                    <dd>Open database connections currently available or in use.</dd>
+                                </div>
+                                <strong id="databasePoolTotal">—</strong>
+                            </div>
+                            <div>
+                                <div>
+                                    <dt>Idle connections</dt>
+                                    <dd>Open connections waiting to be reused.</dd>
+                                </div>
+                                <strong id="databasePoolIdle">—</strong>
+                            </div>
+                            <div>
+                                <div>
+                                    <dt>Waiting requests</dt>
+                                    <dd>Queries waiting for a free connection.</dd>
+                                </div>
+                                <strong id="databasePoolWaiting">—</strong>
+                            </div>
+                            <div>
+                                <div>
+                                    <dt>Query response</dt>
+                                    <dd>Time taken by a simple database check.</dd>
+                                </div>
+                                <strong id="databaseResponseTime">—</strong>
+                            </div>
+                            <div>
+                                <div>
+                                    <dt>Last checked</dt>
+                                    <dd>When the connection check was run.</dd>
+                                </div>
+                                <strong id="databaseCheckedAt">—</strong>
+                            </div>
+                            </dl>
+                            <p class="database-panel-note">Connection credentials and server addresses are not shown here.</p>
+                        </aside>
+
+                        <aside class="database-panel dependency-panel" aria-labelledby="passwordCheckerTitle">
+                            <div class="database-panel-heading">
+                                <span class="database-panel-icon dependency-panel-icon material-symbols-outlined" aria-hidden="true">password</span>
+                                <div>
+                                    <p class="settings-card-eyebrow">PASSWORD SECURITY</p>
+                                    <h2 id="passwordCheckerTitle">ts-zxcvbn</h2>
+                                </div>
+                            </div>
+                            <div class="dependency-status-row">
+                                <span class="dependency-status-label">Status</span>
+                                <strong id="passwordCheckerStatus" class="dependency-status" data-status="checking">Checking</strong>
+                            </div>
+                            <p class="database-panel-note">Checks password strength during registration and password changes.</p>
+                        </aside>
+                    </div>
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+        <form id="accountSettingsForm">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="user-dialog-eyebrow">My account</p>
+                    <h2 id="accountSettingsTitle">Account settings</h2>
+                </div>
+                <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close dialog">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="user-dialog-fields account-dialog-fields">
+                <label>
+                    First name
+                    <input id="accountFullName" name="full_name" type="text" maxlength="100" autocomplete="given-name" required>
+                </label>
+                <label>
+                    Surname
+                    <input id="accountSurname" name="full_surname" type="text" maxlength="100" autocomplete="family-name">
+                </label>
+                <label class="user-dialog-wide">
+                    Email
+                    <input id="accountEmail" name="email" type="email" maxlength="150" autocomplete="email" required>
+                </label>
+            </div>
+
+            <div class="account-password-section">
+                <h3>Change password</h3>
+                <p>Leave these fields blank to keep your current password. New passwords must meet the configured strength requirement.</p>
+                <div class="user-dialog-fields account-dialog-fields">
+                    <label class="user-dialog-wide">
+                        Current password
+                        <input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password">
+                    </label>
+                    <label>
+                        New password
+                        <input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password">
+                    </label>
+                    <label>
+                        Confirm new password
+                        <input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password">
+                    </label>
+                </div>
+            </div>
+
+            <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+            <div class="user-dialog-actions">
+                <button class="user-dialog-signout" id="accountSignOut" type="button">
+                    <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+                    Sign out
+                </button>
+                <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+                <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
+            </div>
+        </form>
+    </dialog>
+
+    <script type="module">
+        import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+        void initializeUserNavigation();
+    </script>
+    <script type="module" src="/src/events/settings/settings.ts"></script>
+</body>
+
+</html>

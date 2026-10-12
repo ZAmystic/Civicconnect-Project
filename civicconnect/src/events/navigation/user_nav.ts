@@ -60,34 +60,61 @@ export async function initializeUserNavigation(): Promise<void> {
     const userManagementLink = document.querySelector<HTMLElement>(
         "#userManagementNav"
     );
-    const currentPath = window.location.pathname;
-    const currentNavItem = currentPath.endsWith("/user_management.html")
-        ? userManagementLink
-        : document.getElementById("requesterNav");
+    const settingsLink = document.querySelector<HTMLElement>("#settingsNav");
     let signedInUser: CurrentUserResponse["user"];
 
-    document.querySelectorAll(".sidebar-nav .nav-item").forEach((item) => {
+    const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
+    const requiresUserManagementAccess =
+        currentPath.endsWith("/user_management.html") ||
+        currentPath.endsWith("/settings.html");
+
+    const redirectToNotFound = (): void => {
+        window.location.replace("/src/pages/404.html");
+    };
+
+    document.querySelectorAll<HTMLAnchorElement>(".sidebar-nav .nav-item[href]").forEach((item) => {
         item.classList.remove("active");
         item.removeAttribute("aria-current");
+
+        const href = item.getAttribute("href");
+        if (!href || href.startsWith("#")) {
+            return;
+        }
+
+        const target = new URL(href, window.location.href);
+        const targetPath = target.pathname.replace(/\/+$/, "") || "/";
+        if (target.origin === window.location.origin && targetPath === currentPath) {
+            item.classList.add("active");
+            item.setAttribute("aria-current", "page");
+        }
     });
-    currentNavItem?.classList.add("active");
-    currentNavItem?.setAttribute("aria-current", "page");
 
     if (userManagementLink) {
         userManagementLink.hidden = true;
     }
-
     try {
         const response = await fetch("/api/users/me");
         if (!response.ok) {
+            if (requiresUserManagementAccess) {
+                redirectToNotFound();
+                return;
+            }
             throw new Error(`Failed to load current user (${response.status}).`);
         }
 
         const data: CurrentUserResponse = await response.json();
         if (!data.success || !data.user) {
+            if (requiresUserManagementAccess) {
+                redirectToNotFound();
+                return;
+            }
             throw new Error("Current-user response is invalid.");
         }
         signedInUser = data.user;
+        if (requiresUserManagementAccess && !data.user.canManageUsers) {
+            redirectToNotFound();
+            return;
+        }
 
         const displayName = [data.user.full_name, data.user.full_surname]
             .filter((part) => part?.trim())
@@ -101,7 +128,15 @@ export async function initializeUserNavigation(): Promise<void> {
         if (userManagementLink) {
             userManagementLink.hidden = !data.user.canManageUsers;
         }
+        if (settingsLink) {
+            settingsLink.hidden = !data.user.canManageUsers;
+        }
     } catch (error) {
+        if (requiresUserManagementAccess) {
+            console.error("Unable to verify access to this page:", error);
+            redirectToNotFound();
+            return;
+        }
         if (nameElement) {
             nameElement.textContent = "User";
         }
@@ -140,6 +175,29 @@ export async function initializeUserNavigation(): Promise<void> {
     });
     document.getElementById("cancelAccountSettings")?.addEventListener("click", () => {
         accountDialog?.close();
+    });
+    document.getElementById("accountSignOut")?.addEventListener("click", async () => {
+        const signOutButton = document.getElementById(
+            "accountSignOut"
+        ) as HTMLButtonElement | null;
+        if (signOutButton) signOutButton.disabled = true;
+
+        try {
+            const response = await fetch("/api/users/logout", { method: "POST" });
+            const data: { success: boolean; message?: string } = await response.json();
+            if (!response.ok || !data.success) {
+                throw new Error(data.message || "Unable to sign out.");
+            }
+            window.location.replace("/src/pages/login.html");
+        } catch (error) {
+            if (signOutButton) signOutButton.disabled = false;
+            if (accountMessage) {
+                accountMessage.textContent = error instanceof Error
+                    ? error.message
+                    : "Unable to sign out.";
+                accountMessage.classList.remove("success");
+            }
+        }
     });
     accountDialog?.addEventListener("click", (event: MouseEvent) => {
         if (event.target === accountDialog) accountDialog.close();
