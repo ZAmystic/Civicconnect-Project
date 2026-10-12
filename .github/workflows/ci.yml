@@ -1,0 +1,162 @@
+name: CI
+
+# Pre-merge gate: runs on every PR targeting main or UAT-DEMO
+on:
+  pull_request:
+    branches: [main, UAT-DEMO]
+    types: [opened, reopened, synchronize]
+
+# Cancel superseded runs when a new commit is pushed to the same PR
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# The app lives in the civicconnect/ subfolder, so every `run:` step starts there
+defaults:
+  run:
+    working-directory: civicconnect
+
+jobs:
+  # ---------------------------------------------------------------
+  # Job 1: offline checks (dummy env values, no real secrets)
+  # ---------------------------------------------------------------
+  verify:
+    name: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      NODE_ENV: test
+      VITE_SUPABASE_URL: http://localhost:54321
+      VITE_SUPABASE_ANON_KEY: dummy-anon-key
+
+    steps:
+      - name: Checkout (full history for secret scanning)
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: civicconnect/package-lock.json
+
+      - name: Install dependencies (deterministic, from package-lock.json)
+        run: npm ci
+
+      - name: Lint (mirrors the local pre-commit check)
+        run: npm run lint --if-present
+
+      - name: Build (tsc + vite build)
+        run: npm run build
+
+      - name: Check the built login page links its CSS and JS
+        run: |
+          grep -Eq 'assets/[^"]+\.css' dist/src/pages/login.html \
+            || { echo "::error::login.html has no CSS bundle (blank-page build)"; exit 1; }
+          grep -Eq 'assets/[^"]+\.js' dist/src/pages/login.html \
+            || { echo "::error::login.html has no JS bundle (blank-page build)"; exit 1; }
+
+      - name: Unit tests (Vitest)
+        run: npm test
+
+      - name: Dependency vulnerability audit
+        run: npm audit --audit-level=high
+
+      - name: Secret & credential scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Only needed if the repo belongs to a GitHub organization:
+          # GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # ---------------------------------------------------------------
+  # Job 2: smoke test against the REAL (test) Supabase/Postgres
+  # and the built site served on a port. Uses GitHub secrets.
+  # ---------------------------------------------------------------
+  smoke:
+    name: smoke
+    needs: verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # Secrets are not available to PRs from forks, so skip there.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    env:
+      NODE_ENV: test
+      PORT: "3000"
+      HEALTH_PATH: /src/pages/login.html
+      # Browser-visible build-time values (the anon key is public by design)
+      VITE_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      # Server-side values, used ONLY by scripts/db-check.js (never VITE_-prefixed)
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_SSL: ${{ secrets.DB_SSL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: civicconnect/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify required secrets are present
+        run: |
+          missing=0
+          for v in SUPABASE_URL SUPABASE_ANON_KEY DATABASE_URL DB_HOST DB_PORT DB_USER DB_PASSWORD DB_NAME; do
+            if [ -z "${!v}" ]; then echo "::error::Secret $v is not set"; missing=1; fi
+          done
+          exit $missing
+
+      - name: Build
+        run: npm run build
+
+      - name: Ensure no database secrets leaked into the build
+        run: |
+          if grep -rqF -- "$DB_PASSWORD" dist; then
+            echo "::error::DB_PASSWORD found in the built site"; exit 1
+          fi
+          if grep -rqF -- "$DATABASE_URL" dist; then
+            echo "::error::DATABASE_URL found in the built site"; exit 1
+          fi
+
+      - name: Check database and Supabase connectivity
+        run: node scripts/db-check.cjs
+
+      - name: Serve the built site and verify it responds on the port
+        run: |
+          npm run preview -- --host 127.0.0.1 --port "${PORT}" --strictPort > server.log 2>&1 &
+          SERVER_PID=$!
+          echo "Waiting for http://127.0.0.1:${PORT}${HEALTH_PATH} ..."
+          for i in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:${PORT}${HEALTH_PATH}" > /dev/null; then
+              echo "Site is up on port ${PORT} (attempt $i)"
+              kill $SERVER_PID
+              exit 0
+            fi
+            if ! kill -0 $SERVER_PID 2>/dev/null; then
+              echo "::error::Preview server exited early"; cat server.log; exit 1
+            fi
+            sleep 2
+          done
+          echo "::error::Site did not respond on port ${PORT} within 60s"
+          cat server.log
+          kill $SERVER_PID || true
+          exit 1
