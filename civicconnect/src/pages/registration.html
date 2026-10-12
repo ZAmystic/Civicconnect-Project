@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/src/css/registration.css" />
+  <link rel="stylesheet" href="assets/css/registration.css" />
 </head>
 <body>
   <main class="portal-card">
@@ -67,7 +67,7 @@
         <h2 class="form-title">Create your CivicConnect Account</h2>
         <p class="form-subtitle">Access municipal services, submit community requests, and track local initiatives.</p>
 
-        <form class="auth-form" onsubmit="event.preventDefault();">
+        <form class="auth-form">
           <div class="form-row">
             <div class="form-group">
               <label class="input-label" for="first-name">First Name</label>
@@ -152,6 +152,8 @@
             <svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
 
+          <p id="registration-message" class="form-message" role="status" aria-live="polite" hidden></p>
+
           <p class="switch-text">
             Already have an account?
             <a class="switch-link" href="login.html" data-nav="back">Sign In</a>
@@ -161,7 +163,7 @@
     </section>
   </main>
 
-  <script src="/src/assets/js/transition.js"></script>
-  <script type="module" src="/src/events/registration/registration.tsx"></script>
+  <script type="module" src="/src/assets/js/transition.js"></script>
+  <script type="module" src="/src/events/registration/registration.ts"></script>
 </body>
 </html>
