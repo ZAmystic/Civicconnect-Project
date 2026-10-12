@@ -91,7 +91,7 @@
         <div class="nav-section">
           <span class="nav-section-title">Administration</span>
         </div>
-        <a class="nav-item" href="#">
+        <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
           <span class="material-symbols-outlined">groups</span>
           <span>User Management</span>
         </a>
@@ -140,8 +140,8 @@
             <span class="avatar-status"></span>
           </div>
           <div class="profile-info">
-            <span class="profile-name">User</span>
-            <span class="profile-role">Role</span>
+            <span class="profile-name">Loading...</span>
+            <span class="profile-role"></span>
           </div>  
         </div>
       </div>
@@ -166,6 +166,10 @@
       document.getElementById('technicianName').innerText = tech;
       document.getElementById('ticketDesc').innerText = desc;
     }
+  </script>
+  <script type="module">
+    import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    void initializeUserNavigation();
   </script>
 </body>
 </html>

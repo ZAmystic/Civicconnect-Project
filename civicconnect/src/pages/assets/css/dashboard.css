@@ -194,6 +194,10 @@ input {
   transition: background-color 0.2s, color 0.2s;
 }
 
+.nav-item[hidden] {
+  display: none;
+}
+
 .nav-item:hover {
   background-color: #334155;
   color: #ffffff;

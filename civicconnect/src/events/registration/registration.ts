@@ -3,6 +3,13 @@ import zxcvbn from "ts-zxcvbn";
 interface RegistrationResponse {
     success: boolean;
     message: string;
+    user?: {
+        user_id: number;
+        full_name: string;
+        account_status: boolean | string;
+        email: string;
+        role: string;
+    };
 }
 
 const registrationForm = document.querySelector<HTMLFormElement>(".auth-form");
@@ -189,4 +196,3 @@ export async function analyse_hashpassword(password: string) {
 
 //     return hashHex;
 // }
-

@@ -16,6 +16,8 @@
 CREATE TABLE IF NOT EXISTS "User" (
     user_id SERIAL NOT NULL,                        -- Auto-incrementing primary key
     full_name VARCHAR(100) NOT NULL,                -- User's display name
+    full_surname VARCHAR(100),                      -- User's surname
+    account_status BOOLEAN NOT NULL DEFAULT TRUE,
     email VARCHAR(150) NOT NULL,                    -- Used for login and notifications
     password_hash VARCHAR(255) NOT NULL,            -- Securely hashed password (never plain text)
     role VARCHAR(20) NOT NULL DEFAULT 'Citizen',    -- Defines system permissions
@@ -23,8 +25,22 @@ CREATE TABLE IF NOT EXISTS "User" (
     PRIMARY KEY (user_id),
     CONSTRAINT uk_user_email UNIQUE (email),        -- Prevents duplicate accounts with the same email
     -- Restricts role values to ensure the backend RBAC (Role-Based Access Control) doesn't break
-    CONSTRAINT chk_user_role CHECK (role IN ('Citizen', 'Staff', 'Manager', 'Contractor'))
+    CONSTRAINT chk_user_role CHECK (role IN ('Citizen', 'Staff', 'Manager', 'Contractor', 'Admin'))
 );
+
+ALTER TABLE "User"
+    ADD COLUMN IF NOT EXISTS full_surname VARCHAR(100);
+
+ALTER TABLE "User"
+    ADD COLUMN IF NOT EXISTS account_status BOOLEAN NOT NULL DEFAULT TRUE;
+
+UPDATE "User"
+SET account_status = TRUE
+WHERE account_status IS NULL;
+
+ALTER TABLE "User"
+    ALTER COLUMN account_status SET DEFAULT TRUE,
+    ALTER COLUMN account_status SET NOT NULL;
 
 
 -- =============================================================================

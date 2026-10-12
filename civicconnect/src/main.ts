@@ -1,5 +1,6 @@
 import express from "express";
 import userRoutes from "./routes/user_route";
+import getUsersRouter from "./routes/get_users";
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(express.json());
 
 // Register user REST API routes
 app.use("/api/users", userRoutes);
+app.use("/api/users", getUsersRouter);
 
 // Basic API health check
 app.get("/api/health", (_req, res) => {
@@ -25,3 +27,4 @@ app.listen(PORT, () => {
         `Server running at http://localhost:${PORT}`
     );
 });
+
