@@ -23,10 +23,26 @@ const passwordInput = document.querySelector<HTMLInputElement>(
     "#login-password"
 );
 
+const loginMessage = document.querySelector<HTMLParagraphElement>(
+    "#login-message"
+);
+
+function showLoginMessage(message: string): void {
+    if (!loginMessage) return;
+
+    loginMessage.textContent = "Error: " + message;
+    loginMessage.hidden = false;
+}
+
 loginForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!emailInput || !passwordInput) return;
+
+    if (loginMessage) {
+        loginMessage.textContent = "";
+        loginMessage.hidden = true;
+    }
 
     const email = emailInput.value.trim();
     const password = passwordInput.value;
@@ -46,7 +62,7 @@ loginForm?.addEventListener("submit", async (event) => {
         const data: LoginResponse = await response.json();
 
         if (!response.ok || !data.success) {
-            alert(data.message || "Login failed.");
+            showLoginMessage(data.message || "Login failed.");
             return;
         }
 
@@ -57,6 +73,6 @@ loginForm?.addEventListener("submit", async (event) => {
 
     } catch (error) {
         console.error("Login request failed:", error);
-        alert("Unable to connect to the server.");
+        showLoginMessage("Unable to connect to the server.");
     }
 });
