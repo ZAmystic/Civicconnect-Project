@@ -181,6 +181,13 @@ input, button { font-family: inherit; }
 
 .form-subtitle { font-size: 13px; color: #94a3b8; margin-bottom: 1.25rem; }
 
+.form-message {
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.form-message.success { color: #86efac; }
+
 /* Forms */
 .auth-form { display: flex; flex-direction: column; gap: 0.875rem; }
 
@@ -242,6 +249,11 @@ input, button { font-family: inherit; }
   cursor: pointer;
 }
 .toggle-password:hover { color: #cbd5e1; }
+
+.submit-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
 
 .checkbox-section { display: flex; flex-direction: column; gap: 0.625rem; }
 

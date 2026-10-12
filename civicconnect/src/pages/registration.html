@@ -67,7 +67,7 @@
         <h2 class="form-title">Create your CivicConnect Account</h2>
         <p class="form-subtitle">Access municipal services, submit community requests, and track local initiatives.</p>
 
-        <form class="auth-form" onsubmit="event.preventDefault();">
+        <form class="auth-form">
           <div class="form-row">
             <div class="form-group">
               <label class="input-label" for="first-name">First Name</label>
@@ -151,6 +151,8 @@
             <span>Complete Registration</span>
             <svg class="svg-icon" viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
           </button>
+
+          <p id="registration-message" class="form-message" role="status" aria-live="polite" hidden></p>
 
           <p class="switch-text">
             Already have an account?

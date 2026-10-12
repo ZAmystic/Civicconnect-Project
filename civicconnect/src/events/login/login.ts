@@ -5,7 +5,6 @@ interface LoginResponse {
     user?: {
         user_id: number;
         full_name: string;
-        full_surname: string;
         email: string;
         role: string;
     };
