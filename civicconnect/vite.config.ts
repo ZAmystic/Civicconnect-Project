@@ -1,19 +1,7 @@
 
-import { defineConfig } from "vite";
+// import { defineConfig } from "vite";
 
-export default defineConfig({
-    server: {
-        port: 5173,
-        strictPort: true,
 
-        proxy: {
-            "/api": {
-                target: "http://127.0.0.1:3000",
-                changeOrigin: true,
-                secure: false
-            }
-        }
-    }
 import { defineConfig } from "vite";
 import type { Plugin } from "vite";
 import { readdirSync } from "node:fs";
@@ -50,11 +38,31 @@ function rootRedirect(): Plugin {
   };
 }
 
+// export default defineConfig({
+//   plugins: [rootRedirect()],
+//   build: {
+//     rollupOptions: {
+//       input: pages,
+//     },
+//   },
+// });
 export default defineConfig({
-  plugins: [rootRedirect()],
+   plugins: [rootRedirect()],
   build: {
     rollupOptions: {
       input: pages,
     },
   },
+    server: {
+        port: 5173,
+        strictPort: true,
+
+        proxy: {
+            "/api": {
+                target: "http://127.0.0.1:3000",
+                changeOrigin: true,
+                secure: false
+            }
+        }
+    },
 });

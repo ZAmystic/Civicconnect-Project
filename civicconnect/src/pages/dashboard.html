@@ -1,11 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CivicConnect - Metropolitan Dashboard</title>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <title>CivicConnect Dashboard</title>
+  
+  <!-- Fonts and Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/src/pages/assets/css/dashboard.css" />
 </head>
 <body>
-    DASHBOARD
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg"/>
+          <span class="logo-title">CivicConnect</span>
+        </div>
+        <div class="role-selector">
+          <div class="role-info">
+            <span class="material-symbols-outlined text-teal">verified_user</span>
+            <span class="role-text">Admin / Ops View</span>
+          </div>
+          <span class="material-symbols-outlined">unfold_more</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <span class="nav-section-title">Dashboards</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">person</span>
+          <span>Requester</span>
+        </a>
+        <a class="nav-item active" href="#">
+          <span class="material-symbols-outlined">inbox</span>
+          <span>Staff Queue</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">analytics</span>
+          <span>Admin Executive</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Service Requests</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">folder_open</span>
+          <span>All Requests</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">add_circle</span>
+          <span>Create Ticket</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">fact_check</span>
+          <span>My Approvals</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Operations</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">timer</span>
+          <span>Workflow & SLA</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span>Departments</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Intelligence</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">insights</span>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Administration</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">groups</span>
+          <span>User Management</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">history</span>
+          <span>Audit Logs</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">Platform Active</span>
+        </div>
+        <span class="version-text">v2.4.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input class="search-input" placeholder="Search requests, ticket #, or citizens... [⌘K]" type="text"/>
+      </div>
+      
+      <div class="header-actions">
+        <a class="btn-primary" href="#">
+          <span class="material-symbols-outlined">add</span>
+          <span>New Request</span>
+        </a>
+        
+        <div class="view-tabs">
+          <button class="tab-btn" type="button">Requester</button>
+          <button class="tab-btn" type="button">Staff</button>
+          <button class="tab-btn active" type="button">Admin</button>
+        </div>
+        
+        <button class="notification-btn" type="button">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="notification-badge">3</span>
+        </button>
+        
+        <div class="vertical-divider"></div>
+        
+        <div class="profile-menu">
+          <div class="avatar-container">
+            <img alt="Profile" class="avatar-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQodr6FN8rmxa2jgymkO82QdvlMW79tWE8wwL8cZjflsJ5S-ZgXSfT0WTCdE42ypiiXOx-UilAIpYGvjlSTeyzFzRRGzDKVjwfxjvRnYuFNX-k5s1mTe9-qQoRN28HjMmFMwIo5oIAmgleSaaeoEGF2B6QND2YBbQXZpQ0YRjGKwUP4VtT-cS1UuPL0c6rNAcZ8udLasIk_RyzihiEuin2edIirfD7BG_PX9JUXU0rr3iLxqM3FJJZ"/>
+            <span class="avatar-status"></span>
+          </div>
+          <div class="profile-info">
+            <span class="profile-name">Elena Vance</span>
+            <span class="profile-role">City Ops Lead</span>
+          </div>
+          <span class="material-symbols-outlined text-gray">expand_more</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-content">
+      
+      <!-- Page Header & Actions -->
+      <div class="page-header">
+        <div class="header-titles">
+          <div class="shift-info">
+            <span class="district-badge">
+              <span class="district-dot"></span>
+              District 04 • Field Squad Alpha
+            </span>
+            <span class="shift-badge">
+              <span class="material-symbols-outlined icon-small">radio_button_checked</span>
+              Shift: On-Duty (07:00 - 15:30)
+            </span>
+          </div>
+          <h1 class="page-title">Staff Operations Console — Ward 3 & 4 Team</h1>
+          <p class="page-subtitle">Real-time triage, technician dispatch routing, and SLA compliance monitoring</p>
+        </div>
+        
+        <div class="header-controls">
+          <div class="date-picker">
+            <span class="material-symbols-outlined">calendar_today</span>
+            <span>Today, Oct 24</span>
+            <span class="material-symbols-outlined">expand_more</span>
+          </div>
+          <button class="btn-secondary" type="button">
+            <span class="material-symbols-outlined">filter_alt</span>
+            <span>Filter Queue</span>
+          </button>
+          <button class="btn-primary shadow" type="button">
+            <span class="material-symbols-outlined">assignment_turned_in</span>
+            <span>Start Work Order</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <!-- KPI 1 -->
+        <div class="kpi-card border-top-blue">
+          <div class="kpi-top">
+            <div>
+              <span class="kpi-label">My Assigned Queue</span>
+              <div class="kpi-value-container">
+                <span class="kpi-value">8</span>
+                <span class="kpi-unit text-teal">tickets active</span>
+              </div>
+            </div>
+            <div class="kpi-icon-box bg-blue-light text-blue">
+              <span class="material-symbols-outlined">pending_actions</span>
+            </div>
+          </div>
+          <div class="kpi-bottom">
+            <span class="kpi-footer-text">
+              <span class="dot-blue"></span> 3 awaiting field rollout
+            </span>
+          </div>
+        </div>
+
+        <!-- KPI 2 -->
+        <div class="kpi-card border-top-red">
+          <div class="kpi-top">
+            <div>
+              <span class="kpi-label">SLA at Risk / Expiring</span>
+              <div class="kpi-value-container">
+                <span class="kpi-value">2</span>
+                <span class="badge-red">Priority Warning</span>
+              </div>
+            </div>
+            <div class="kpi-icon-box bg-red-light text-red-dark">
+              <span class="material-symbols-outlined">timer_off</span>
+            </div>
+          </div>
+          <div class="kpi-bottom">
+            <span class="kpi-footer-text text-red font-bold">
+              <span class="material-symbols-outlined icon-small">schedule</span> 1 critical &lt; 45m left
+            </span>
+          </div>
+        </div>
+
+        <!-- KPI 3 -->
+        <div class="kpi-card border-top-teal">
+          <div class="kpi-top">
+            <div>
+              <span class="kpi-label">Completed Today</span>
+              <div class="kpi-value-container">
+                <span class="kpi-value">5</span>
+                <span class="kpi-unit text-gray">/ 9 target quota</span>
+              </div>
+            </div>
+            <div class="kpi-icon-box bg-gray-light text-teal">
+              <span class="material-symbols-outlined">task_alt</span>
+            </div>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: 55%;"></div>
+          </div>
+        </div>
+
+        <!-- KPI 4 -->
+        <div class="kpi-card border-top-blue-dark">
+          <div class="kpi-top">
+            <div>
+              <span class="kpi-label">Team Efficiency Rate</span>
+              <div class="kpi-value-container">
+                <span class="kpi-value">96.4%</span>
+                <span class="kpi-unit text-teal font-bold"><span class="material-symbols-outlined icon-small">north</span> +2.8%</span>
+              </div>
+            </div>
+            <div class="kpi-icon-box bg-gray-light text-blue-dark">
+              <span class="material-symbols-outlined">speed</span>
+            </div>
+          </div>
+          <div class="kpi-bottom space-between">
+            <span class="kpi-footer-text">Ward 3 Avg: 91.2%</span>
+            <span class="kpi-footer-text text-blue-dark font-bold">Tier 1 Elite</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Two-Column Layout -->
+      <div class="dashboard-columns">
+        
+        <!-- Left Column (Tables & Maps) -->
+        <div class="left-column">
+          
+          <!-- Queue Table Panel -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <h2 class="panel-title">Priority Action Queue</h2>
+                <span class="badge-gray">8 Pending</span>
+              </div>
+              <div class="filter-chips">
+                <button class="chip active">All Wards</button>
+                <button class="chip">Urgent Only (1)</button>
+                <button class="chip">Civil Works (4)</button>
+                <button class="chip">Water & Power (2)</button>
+              </div>
+            </div>
+            
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Priority</th>
+                    <th>Ticket ID & Subject</th>
+                    <th>Requester</th>
+                    <th>Department</th>
+                    <th>SLA Countdown</th>
+                    <th>Status</th>
+                    <th class="text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Row 1 -->
+                  <tr onclick="selectTicket('REQ-8461', 'Water Pressure Drop', 'Urgent', 'Public Utilities', 'Breached by 20m', 'Water Main Junction 4B', 'Elena Vance', 'Clogged regulator valve suspected. Back-pressure valve #2 reading 14 PSI.')">
+                    <td><span class="badge-urgent"><span class="dot-urgent pulse"></span> Urgent</span></td>
+                    <td>
+                      <div class="ticket-info">
+                        <span class="ticket-id">#REQ-8461</span>
+                        <span class="ticket-subject">Water Pressure Drop</span>
+                      </div>
+                    </td>
+                    <td>Marcus Holloway</td>
+                    <td><span class="dept-badge">Water & Power</span></td>
+                    <td><span class="sla-breached"><span class="material-symbols-outlined icon-small">warning</span> Breached by 20m</span></td>
+                    <td><span class="status-triage">In Triage</span></td>
+                    <td class="text-right"><button class="btn-action-primary">Accept</button></td>
+                  </tr>
+                  <!-- Row 2 -->
+                  <tr class="row-selected" onclick="selectTicket('REQ-8492', 'Pothole Repair & Asphalt Sag', 'High', 'Civil Works', '1h 14m remaining', 'North Oak Ave & 12th St', 'Elena Vance', 'Subsurface erosion detected. Heavy aggregate truck route compromised. Urgent resurface required.')">
+                    <td><span class="badge-high"><span class="dot-high"></span> High</span></td>
+                    <td>
+                      <div class="ticket-info">
+                        <div class="ticket-id-group">
+                          <span class="ticket-id font-bold">#REQ-8492</span>
+                          <span class="dot-blue-small"></span>
+                        </div>
+                        <span class="ticket-subject font-bold">Pothole Repair & Asphalt Sag</span>
+                      </div>
+                    </td>
+                    <td>Sarah Lindqvist</td>
+                    <td><span class="dept-badge bg-gray">Civil Works</span></td>
+                    <td><span class="sla-normal"><span class="material-symbols-outlined icon-small">timelapse</span> 1h 14m left</span></td>
+                    <td><span class="status-route">En Route</span></td>
+                    <td class="text-right"><button class="btn-action-secondary">Update</button></td>
+                  </tr>
+                  <!-- Row 3 -->
+                  <tr onclick="selectTicket('REQ-8458', 'Traffic Signal Sync Fail', 'Medium', 'Transit Logistics', '4h 30m remaining', 'Intersection Broadway & Elm', 'Officer J. Ramos', 'Red-phase timing drift causing rolling congestions during rush hours.')">
+                    <td><span class="badge-medium"><span class="dot-medium"></span> Medium</span></td>
+                    <td>
+                      <div class="ticket-info">
+                        <span class="ticket-id">#REQ-8458</span>
+                        <span class="ticket-subject">Traffic Signal Sync Fail</span>
+                      </div>
+                    </td>
+                    <td>Transit Command</td>
+                    <td><span class="dept-badge">Transit Grid</span></td>
+                    <td><span class="sla-normal text-gray-dark">4h 30m remaining</span></td>
+                    <td><span class="status-queued">Queued</span></td>
+                    <td class="text-right"><button class="btn-action-secondary">Reassign</button></td>
+                  </tr>
+                  <!-- Row 4 -->
+                  <tr onclick="selectTicket('REQ-8422', 'Tree Limb Removal Over Pedestrian Walk', 'Low', 'Parks & Greenspace', '18h 10m remaining', 'Parkview Alley Greenway', 'Community Board 3', 'Fallen oak branch obstructing northern bike lane. No overhead wire hazard.')">
+                    <td><span class="badge-low"><span class="dot-low"></span> Low</span></td>
+                    <td>
+                      <div class="ticket-info">
+                        <span class="ticket-id">#REQ-8422</span>
+                        <span class="ticket-subject">Tree Limb Removal Over Pedestrian Walk</span>
+                      </div>
+                    </td>
+                    <td>Clara Vance</td>
+                    <td><span class="dept-badge">Parks & Forestry</span></td>
+                    <td><span class="sla-normal text-gray-dark">18h 10m remaining</span></td>
+                    <td><span class="status-queued">Scheduled</span></td>
+                    <td class="text-right"><button class="btn-action-secondary">Accept</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Map Panel -->
+          <div class="panel">
+            <div class="map-header">
+              <div class="map-title-group">
+                <span class="material-symbols-outlined icon-teal large">map</span>
+                <div>
+                  <h3 class="panel-title">Field Dispatch Routing • Ward 3/4 Geo-Grid</h3>
+                  <p class="panel-subtitle">Real-time GPS tracking for Mobile Unit 14 & 16</p>
+                </div>
+              </div>
+              <span class="route-badge">Optimal Route: 14.2 km total</span>
+            </div>
+            
+            <div class="map-grid">
+              <!-- Map Image Area -->
+              <div class="map-container" style="background-image: url('https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg')">
+                <div class="map-overlay">
+                  <div class="map-info-bar">
+                    <div class="vehicle-info">
+                      <span class="vehicle-dot"></span>
+                      <div>
+                        <div class="vehicle-name">Current Vehicle: Utility Truck #402</div>
+                        <div class="vehicle-eta">En route to North Oak Ave • ETA 6 min</div>
+                      </div>
+                    </div>
+                    <span class="speed-badge">Speed: 38 km/h</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Route Itinerary -->
+              <div class="itinerary-panel">
+                <div class="itinerary-list">
+                  <span class="section-label">Waypoint Progression</span>
+                  
+                  <div class="waypoint">
+                    <span class="waypoint-number active">1</span>
+                    <div>
+                      <div class="waypoint-title">North Oak Ave & 12th</div>
+                      <div class="waypoint-desc">#REQ-8492 • 09:30 Dispatch</div>
+                    </div>
+                  </div>
+                  
+                  <div class="waypoint">
+                    <span class="waypoint-number highlight">2</span>
+                    <div>
+                      <div class="waypoint-title">Water Junction 4B</div>
+                      <div class="waypoint-desc">#REQ-8461 • 11:15 Standby</div>
+                    </div>
+                  </div>
+                  
+                  <div class="waypoint">
+                    <span class="waypoint-number default">3</span>
+                    <div>
+                      <div class="waypoint-title">Parkview Alley Greenway</div>
+                      <div class="waypoint-desc">#REQ-8422 • 14:00 Scheduled</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <button class="btn-sync" type="button">
+                  <span class="material-symbols-outlined">directions</span>
+                  <span>Sync with On-board Nav</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column (Sticky Ticket Details) -->
+        <div class="right-column">
+          <div class="panel sticky-panel">
+            
+            <div class="ticket-preview-header">
+              <div>
+                <div class="badge-group">
+                  <span class="badge-id" id="ticketIdBadge">#REQ-8492</span>
+                  <span class="badge-priority" id="ticketPriorityBadge">High Priority</span>
+                </div>
+                <h3 class="ticket-title-large" id="ticketTitlePreview">Pothole Repair & Asphalt Sag</h3>
+              </div>
+              <button class="btn-icon" title="Full Ticket View" type="button">
+                <span class="material-symbols-outlined">open_in_new</span>
+              </button>
+            </div>
+
+            <div class="metadata-grid">
+              <div class="meta-item">
+                <span class="meta-label">Department</span>
+                <span class="meta-value" id="ticketDept">Civil Works</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Remaining SLA</span>
+                <span class="meta-value text-red font-code" id="ticketSla">1h 14m remaining</span>
+              </div>
+              <div class="meta-item full-width">
+                <span class="meta-label">Location Coordinates</span>
+                <span class="meta-value location-text" id="ticketLocation">
+                  <span class="material-symbols-outlined text-blue">pin_drop</span>
+                  North Oak Ave & 12th St
+                </span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <span class="section-label">Incident Summary</span>
+              <p class="summary-box" id="ticketDesc">
+                Subsurface erosion detected. Heavy aggregate truck route compromised. Urgent resurface required before evening transit peak.
+              </p>
+            </div>
+
+            <div class="detail-section">
+              <span class="section-label">Assigned Technician Lead</span>
+              <div class="technician-card">
+                <div class="technician-info">
+                  <img class="tech-avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUTiv60vDA-GcBFjss4eKv27JWX9Yg-6tVLLsoRXtiMh3MyhOm1DQIPmAwRL2YEdlVffhUaqRJ-y5XvW-8iG18KiNthrg8dKAhgsbc3Mlt3O3iYQPtl6gbbA6zWbN-zhIJ7kSLOh-JJur2N2SAxId7IfThDRzJB32eV_mqRTnaTJwXHMorP7mHkW11L7dncVjpOWzjUgrl0To3qr31i8yIZnFBwqb77puX_o3fIguNZrdb8FF_rVM9"/>
+                  <div>
+                    <div class="tech-name" id="technicianName">Elena Vance</div>
+                    <div class="tech-role">Lead Engineer • Shift A</div>
+                  </div>
+                </div>
+                <span class="material-symbols-outlined text-teal">verified</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="flex-between">
+                <span class="section-label">Equipment Checklist</span>
+                <span class="checklist-count">2/3 Verified</span>
+              </div>
+              <div class="checklist">
+                <label class="check-item">
+                  <input type="checkbox" checked class="checkbox-custom" />
+                  <span>Cold Asphalt Premix (6 bags)</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" checked class="checkbox-custom" />
+                  <span>Plate Compactor #03</span>
+                </label>
+                <label class="check-item">
+                  <input type="checkbox" class="checkbox-custom" />
+                  <span class="text-strike">Traffic Barricades Set (4x)</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <span class="section-label">Internal Crew Logs</span>
+              <div class="log-entry">
+                <span class="material-symbols-outlined text-blue icon-small log-icon">comment</span>
+                <div class="log-content">
+                  <span class="font-bold text-dark">Radio Ops:</span> Dispatch confirmed road diversion at 09:28.
+                  <div class="log-time">12 min ago</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="workflow-actions">
+              <span class="section-label">Execute Workflow Action</span>
+              <div class="action-grid">
+                <button class="btn-grid-secondary" type="button">
+                  <span class="material-symbols-outlined">emergency_share</span>
+                  <span>Escalate</span>
+                </button>
+                <button class="btn-grid-primary" type="button">
+                  <span class="material-symbols-outlined">engineering</span>
+                  <span>In-Progress</span>
+                </button>
+              </div>
+              <button class="btn-resolve" type="button">
+                <span class="material-symbols-outlined">check_circle</span>
+                <span>Mark Resolved & Upload Evidence</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function selectTicket(id, title, priority, dept, sla, location, tech, desc) {
+      document.getElementById('ticketIdBadge').innerText = '#' + id;
+      document.getElementById('ticketTitlePreview').innerText = title;
+      document.getElementById('ticketPriorityBadge').innerText = priority + ' Priority';
+      document.getElementById('ticketDept').innerText = dept;
+      document.getElementById('ticketSla').innerText = sla;
+      document.getElementById('ticketLocation').innerHTML = '<span class="material-symbols-outlined text-blue icon-small">pin_drop</span> ' + location;
+      document.getElementById('technicianName').innerText = tech;
+      document.getElementById('ticketDesc').innerText = desc;
+    }
+  </script>
 </body>
 </html>

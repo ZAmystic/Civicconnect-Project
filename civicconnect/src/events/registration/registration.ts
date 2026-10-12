@@ -136,16 +136,16 @@ const MinimumViablePasswordStrength = 3;
 // Events
 //----------------------------------------------------------------------------
 
-const rPassword = document.querySelector<HTMLInputElement>("#reg-password");
+// const rPassword = document.querySelector<HTMLInputElement>("#reg-password");
 rPassword?.form?.addEventListener("submit", () => {
-    analyse_password(rPassword.value);
+    analyse_hashpassword(rPassword.value);
 });
 
 //----------------------------------------------------------------------------
 // Password strength analysis and hashing functions
 //----------------------------------------------------------------------------
-
-export async function analyse_password(password: string) {
+//changed to analyse_hashpassword to avoid confusion with the other function
+export async function analyse_hashpassword(password: string) {
     if (!password) {
         console.error("No password provided in field reg-password.");
         return null;
