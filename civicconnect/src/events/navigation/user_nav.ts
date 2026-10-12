@@ -1,19 +1,77 @@
+import { assessPasswordStrength } from "../../utils/password_strength";
+
 interface CurrentUserResponse {
     success: boolean;
     user?: {
         full_name: string;
         full_surname: string | null;
+        email: string;
         role: string;
         canManageUsers: boolean;
+    };
+}
+
+interface AccountUpdateResponse {
+    success: boolean;
+    message: string;
+    user?: {
+        full_name: string;
+        full_surname: string | null;
+        email: string;
     };
 }
 
 export async function initializeUserNavigation(): Promise<void> {
     const nameElement = document.querySelector<HTMLElement>(".profile-name");
     const roleElement = document.querySelector<HTMLElement>(".profile-role");
+    const profileButton = document.getElementById(
+        "accountProfileButton"
+    ) as HTMLButtonElement | null;
+    const accountDialog = document.getElementById(
+        "accountSettingsDialog"
+    ) as HTMLDialogElement | null;
+    const accountForm = document.getElementById(
+        "accountSettingsForm"
+    ) as HTMLFormElement | null;
+    const accountMessage = document.getElementById(
+        "accountSettingsMessage"
+    ) as HTMLParagraphElement | null;
+    const saveButton = document.getElementById(
+        "saveAccountSettings"
+    ) as HTMLButtonElement | null;
+    const fullNameInput = document.getElementById(
+        "accountFullName"
+    ) as HTMLInputElement | null;
+    const surnameInput = document.getElementById(
+        "accountSurname"
+    ) as HTMLInputElement | null;
+    const emailInput = document.getElementById(
+        "accountEmail"
+    ) as HTMLInputElement | null;
+    const currentPasswordInput = document.getElementById(
+        "accountCurrentPassword"
+    ) as HTMLInputElement | null;
+    const newPasswordInput = document.getElementById(
+        "accountNewPassword"
+    ) as HTMLInputElement | null;
+    const confirmPasswordInput = document.getElementById(
+        "accountConfirmPassword"
+    ) as HTMLInputElement | null;
     const userManagementLink = document.querySelector<HTMLElement>(
         "#userManagementNav"
     );
+    const currentPath = window.location.pathname;
+    const currentNavItem = currentPath.endsWith("/user_management.html")
+        ? userManagementLink
+        : document.getElementById("requesterNav");
+    let signedInUser: CurrentUserResponse["user"];
+
+    document.querySelectorAll(".sidebar-nav .nav-item").forEach((item) => {
+        item.classList.remove("active");
+        item.removeAttribute("aria-current");
+    });
+    currentNavItem?.classList.add("active");
+    currentNavItem?.setAttribute("aria-current", "page");
 
     if (userManagementLink) {
         userManagementLink.hidden = true;
@@ -29,6 +87,7 @@ export async function initializeUserNavigation(): Promise<void> {
         if (!data.success || !data.user) {
             throw new Error("Current-user response is invalid.");
         }
+        signedInUser = data.user;
 
         const displayName = [data.user.full_name, data.user.full_surname]
             .filter((part) => part?.trim())
@@ -51,4 +110,124 @@ export async function initializeUserNavigation(): Promise<void> {
         }
         console.error("Unable to load signed-in user details:", error);
     }
+
+    profileButton?.addEventListener("click", () => {
+        if (
+            !signedInUser ||
+            !accountDialog ||
+            !accountMessage ||
+            !fullNameInput ||
+            !surnameInput ||
+            !emailInput
+        ) {
+            return;
+        }
+
+        accountMessage.textContent = "";
+        accountMessage.classList.remove("success");
+        fullNameInput.value = signedInUser.full_name;
+        surnameInput.value = signedInUser.full_surname ?? "";
+        emailInput.value = signedInUser.email;
+        if (currentPasswordInput) currentPasswordInput.value = "";
+        if (newPasswordInput) newPasswordInput.value = "";
+        if (confirmPasswordInput) confirmPasswordInput.value = "";
+        accountDialog.showModal();
+        fullNameInput.focus();
+    });
+
+    document.getElementById("closeAccountSettings")?.addEventListener("click", () => {
+        accountDialog?.close();
+    });
+    document.getElementById("cancelAccountSettings")?.addEventListener("click", () => {
+        accountDialog?.close();
+    });
+    accountDialog?.addEventListener("click", (event: MouseEvent) => {
+        if (event.target === accountDialog) accountDialog.close();
+    });
+
+    accountForm?.addEventListener("submit", async (event: SubmitEvent) => {
+        event.preventDefault();
+        if (
+            !signedInUser ||
+            !accountMessage ||
+            !saveButton ||
+            !fullNameInput ||
+            !surnameInput ||
+            !emailInput ||
+            !currentPasswordInput ||
+            !newPasswordInput ||
+            !confirmPasswordInput
+        ) {
+            return;
+        }
+
+        accountMessage.textContent = "";
+        accountMessage.classList.remove("success");
+        saveButton.disabled = true;
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+
+        try {
+            if (newPassword || currentPassword || confirmPassword) {
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    throw new Error(
+                        "Enter your current password, new password, and confirmation to change your password."
+                    );
+                }
+                if (newPassword !== confirmPassword) {
+                    throw new Error("New password and confirmation do not match.");
+                }
+                const assessment = await assessPasswordStrength(newPassword);
+                if (assessment.score < assessment.minimumStrength) {
+                    throw new Error(
+                        `Choose a stronger password (strength level ${assessment.minimumStrength} required).`
+                    );
+                }
+            }
+
+            const response = await fetch("/api/users/me", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    full_name: fullNameInput.value.trim(),
+                    full_surname: surnameInput.value.trim(),
+                    email: emailInput.value.trim(),
+                    ...(newPassword
+                        ? {
+                            current_password: currentPassword,
+                            new_password: newPassword,
+                            confirm_password: confirmPassword
+                        }
+                        : {})
+                })
+            });
+            const data: AccountUpdateResponse = await response.json();
+            if (!response.ok || !data.success || !data.user) {
+                throw new Error(data.message || "Failed to update account.");
+            }
+
+            signedInUser = {
+                ...signedInUser,
+                ...data.user
+            };
+            if (nameElement) {
+                nameElement.textContent = [data.user.full_name, data.user.full_surname]
+                    .filter((part) => part?.trim())
+                    .join(" ");
+            }
+            accountMessage.textContent = data.message;
+            accountMessage.classList.add("success");
+            currentPasswordInput.value = "";
+            newPasswordInput.value = "";
+            confirmPasswordInput.value = "";
+        } catch (error) {
+            console.error("Unable to update account:", error);
+            accountMessage.textContent = error instanceof Error
+                ? error.message
+                : "Failed to update account.";
+        } finally {
+            saveButton.disabled = false;
+        }
+    });
 }

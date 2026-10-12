@@ -23,9 +23,32 @@ let users: User[] = [];
 let selectedUser: User | null = null;
 
 function getAccountStatusLabel(status: boolean | string): "Active" | "Inactive" {
-    return status === true || String(status).toLowerCase() === "active"
+    return status === true ||
+        ["active", "true"].includes(String(status).toLowerCase())
         ? "Active"
         : "Inactive";
+}
+
+function updateUserAnalytics(userList: User[]): void {
+    const activeUsers = userList.filter(
+        (user) => getAccountStatusLabel(user.account_status) === "Active"
+    ).length;
+    const metrics: Record<string, number> = {
+        totalUserMetric: userList.length,
+        activeUserMetric: activeUsers,
+        inactiveUserMetric: userList.length - activeUsers,
+        contractorUserMetric: userList.filter((user) => user.role === "Contractor").length,
+        staffManagerUserMetric: userList.filter(
+            (user) => user.role === "Staff" || user.role === "Manager"
+        ).length
+    };
+
+    for (const [id, value] of Object.entries(metrics)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = String(value);
+        }
+    }
 }
 
 const tableBody = document.getElementById(
@@ -140,6 +163,7 @@ async function loadUsers(): Promise<void> {
         }
 
         users = data.users;
+        updateUserAnalytics(users);
 
         filterUsers();
 
@@ -158,6 +182,7 @@ async function loadUsers(): Promise<void> {
         if (userCount) {
             userCount.textContent = "0 users";
         }
+        updateUserAnalytics([]);
     }
 }
 
@@ -307,6 +332,7 @@ userDetailsForm?.addEventListener("submit", async (event: SubmitEvent) => {
         users = users.map((user) =>
             user.user_id === data.user?.user_id ? data.user : user
         );
+        updateUserAnalytics(users);
         closeUserDialog();
         filterUsers();
     } catch (error) {

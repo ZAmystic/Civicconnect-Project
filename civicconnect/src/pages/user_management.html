@@ -47,7 +47,7 @@
                 <div class="nav-section">
                     <span class="nav-section-title">Dashboards</span>
                 </div>
-                <a class="nav-item" href="#">
+                <a class="nav-item" id="requesterNav" href="dashboard.html">
                     <span class="material-symbols-outlined">person</span>
                     <span>Requester</span>
                 </a>
@@ -142,17 +142,17 @@
                 </a>
                 <div class="vertical-divider"></div>
 
-                <div class="profile-menu">
-                    <div class="avatar-container">
+                <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+                    <span class="avatar-container">
                         <img alt="Profile" class="avatar-img"
                             src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ace759f&is=6acd241f&hm=5399b014e4325c489f5ddbe529108ab2c3525a12d48608d45ae360595b90bed2&" />
                         <span class="avatar-status"></span>
-                    </div>
-                    <div class="profile-info">
+                    </span>
+                    <span class="profile-info">
                         <span class="profile-name">Loading...</span>
                         <span class="profile-role"></span>
-                    </div>
-                </div>
+                    </span>
+                </button>
             </div>
         </header>
 
@@ -167,15 +167,55 @@
                     </div>
                     <p>Manage registered CivicConnect users. Select a row to view or edit its details.</p>
                 </div>
-
-                <button class="btn-primary" type="button">
-                    <span class="material-symbols-outlined">add</span>
-                    Add User
-                </button>
             </div>
 
             <div class="users-container">
                 <h1>User Management</h1>
+
+                <section class="user-analytics" aria-label="User analytics">
+                    <article class="user-analytics-card">
+                        <div class="user-analytics-icon total">
+                            <span class="material-symbols-outlined" aria-hidden="true">groups</span>
+                        </div>
+                        <div class="user-analytics-copy">
+                            <p>Total Users</p>
+                            <strong id="totalUserMetric">0</strong>
+                        </div>
+                    </article>
+
+                    <article class="user-analytics-card">
+                        <div class="user-analytics-icon activity">
+                            <span class="material-symbols-outlined" aria-hidden="true">monitoring</span>
+                        </div>
+                        <div class="user-analytics-copy user-analytics-status">
+                            <p>Account Status</p>
+                            <div class="user-analytics-status-counts">
+                                <span class="active-count"><strong id="activeUserMetric">0</strong> Active</span>
+                                <span class="inactive-count"><strong id="inactiveUserMetric">0</strong> Inactive</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="user-analytics-card">
+                        <div class="user-analytics-icon contractor">
+                            <span class="material-symbols-outlined" aria-hidden="true">engineering</span>
+                        </div>
+                        <div class="user-analytics-copy">
+                            <p>Contractors</p>
+                            <strong id="contractorUserMetric">0</strong>
+                        </div>
+                    </article>
+
+                    <article class="user-analytics-card">
+                        <div class="user-analytics-icon staff">
+                            <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+                        </div>
+                        <div class="user-analytics-copy">
+                            <p>Staff &amp; Managers</p>
+                            <strong id="staffManagerUserMetric">0</strong>
+                        </div>
+                    </article>
+                </section>
 
                 <div class="users-toolbar">
                     <input type="search" id="userSearch" placeholder="Search users...">
@@ -261,6 +301,60 @@
             <div class="user-dialog-actions">
                 <button class="user-dialog-cancel" id="cancelUserEdit" type="button">Cancel</button>
                 <button class="user-dialog-save" id="saveUserEdit" type="submit">Save changes</button>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+        <form id="accountSettingsForm">
+            <div class="user-dialog-header">
+                <div>
+                    <p class="user-dialog-eyebrow">My account</p>
+                    <h2 id="accountSettingsTitle">Account settings</h2>
+                </div>
+                <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close dialog">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div class="user-dialog-fields account-dialog-fields">
+                <label>
+                    First name
+                    <input id="accountFullName" name="full_name" type="text" maxlength="100" autocomplete="given-name" required>
+                </label>
+                <label>
+                    Surname
+                    <input id="accountSurname" name="full_surname" type="text" maxlength="100" autocomplete="family-name">
+                </label>
+                <label class="user-dialog-wide">
+                    Email
+                    <input id="accountEmail" name="email" type="email" maxlength="150" autocomplete="email" required>
+                </label>
+            </div>
+
+            <div class="account-password-section">
+                <h3>Change password</h3>
+                <p>Leave these fields blank to keep your current password. New passwords must meet the configured strength requirement.</p>
+                <div class="user-dialog-fields account-dialog-fields">
+                    <label class="user-dialog-wide">
+                        Current password
+                        <input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password">
+                    </label>
+                    <label>
+                        New password
+                        <input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password">
+                    </label>
+                    <label>
+                        Confirm new password
+                        <input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password">
+                    </label>
+                </div>
+            </div>
+
+            <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+            <div class="user-dialog-actions">
+                <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+                <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
             </div>
         </form>
     </dialog>
