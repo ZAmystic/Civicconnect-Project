@@ -8,7 +8,7 @@ body {
   /* background: radial-gradient(circle at 80% 50%, #14274a 0%, #0b1325 50%, #060a14 100%); */
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-    url(/src/assets/background.png);
+    url(images/background.png);
   background-size: cover;
   background-position: center;
   min-height: 100vh;
