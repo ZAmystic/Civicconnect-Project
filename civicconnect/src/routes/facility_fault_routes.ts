@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { getSessionUserId } from "../auth/user_session";
 import { dbPool } from "../config/database";
+import { createTicket } from "./ticket_creation";
 
 const router = Router();
 const faultClassifications = [
@@ -20,18 +21,6 @@ interface CreateFacilityFaultBody {
     faultClassification: typeof faultClassifications[number];
     urgency: typeof urgencyLevels[number];
     incidentDescription: string;
-}
-
-interface TicketIdRow {
-    ticket_id: string;
-}
-
-interface CategoryIdRow {
-    category_id: number;
-}
-
-interface TrackingNumberRow {
-    last_number: string;
 }
 
 interface UserStatusRow {
@@ -144,69 +133,13 @@ router.post("/", async (req: Request, res: Response) => {
             });
         }
 
-        await client.query(
-            `
-            INSERT INTO "ServiceCategory" (category_name, sla_hours)
-            VALUES ('Facility Faults', 48)
-            ON CONFLICT (category_name) DO NOTHING
-            `
-        );
-        const categoryResult = await client.query<CategoryIdRow>(
-            'SELECT category_id FROM "ServiceCategory" WHERE category_name = $1',
-            ["Facility Faults"]
-        );
-        const category = categoryResult.rows[0];
-        if (!category) {
-            throw new Error('The "Facility Faults" service category could not be created.');
-        }
-
-        const sequenceResult = await client.query<TicketIdRow>(
-            `SELECT nextval(pg_get_serial_sequence('"Ticket"', 'ticket_id'))::text AS ticket_id`
-        );
-        const ticketId = BigInt(sequenceResult.rows[0].ticket_id);
-        const ticketIdText = ticketId.toString();
-        const trackingYear = new Date().getUTCFullYear();
-        const trackingPattern = `^TCK-F-${trackingYear}-([0-9]+)$`;
-        await client.query(
-            "SELECT pg_advisory_xact_lock(hashtext($1))",
-            [`facility-fault-tracking-ref:${trackingYear}`]
-        );
-        const trackingNumberResult = await client.query<TrackingNumberRow>(
-            `
-            SELECT COALESCE(MAX((regexp_match(tracking_ref, $1))[1]::BIGINT), 1005)::text AS last_number
-            FROM "Ticket"
-            WHERE tracking_ref ~ $1
-            `,
-            [trackingPattern]
-        );
-        const nextTrackingNumber = (BigInt(trackingNumberResult.rows[0].last_number) + 1n)
-            .toString()
-            .padStart(4, "0");
-        const trackingReference = `TCK-F-${trackingYear}-${nextTrackingNumber}`;
-        const ticketResult = await client.query<{ ticket_id: string; tracking_ref: string }>(
-            `
-            INSERT INTO "Ticket" (
-                ticket_id,
-                tracking_ref,
-                citizen_id,
-                category_id,
-                description
-            )
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING ticket_id::text, tracking_ref
-            `,
-            [
-                ticketIdText,
-                trackingReference,
-                userId,
-                category.category_id,
-                body.incidentDescription
-            ]
-        );
-        const ticket = ticketResult.rows[0];
-        if (!ticket) {
-            throw new Error("The facility ticket was not returned after insertion.");
-        }
+        const ticket = await createTicket(client, {
+            citizenId: userId,
+            categoryName: "Facility Faults",
+            slaHours: 48,
+            trackingCode: "F",
+            description: body.incidentDescription
+        });
 
         await client.query(
             `
