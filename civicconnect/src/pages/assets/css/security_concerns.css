@@ -184,12 +184,18 @@ input {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 8px;
+  padding: 6px 10px;
   border-radius: 4px;
   color: #cbd5e1;
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.2;
   transition: background-color 0.2s, color 0.2s;
+}
+
+.service-page-nav-item {
+  margin-left: 0;
+  padding-left: 10px;
 }
 
 .nav-item[hidden] {

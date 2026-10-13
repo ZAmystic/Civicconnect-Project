@@ -7,6 +7,7 @@ This verification area is intentionally separate from application source. It ver
 From `civicconnect/`:
 
 ```sh
+npm ci
 npm test
 npx playwright install chromium
 npm run test:e2e

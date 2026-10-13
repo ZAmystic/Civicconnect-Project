@@ -200,7 +200,6 @@ export async function initializeUserNavigation(): Promise<void> {
             const link = document.createElement("a");
             link.className = "nav-item service-page-nav-item";
             link.href = new URL(page.href, window.location.href).pathname;
-            link.style.paddingLeft = "24px";
 
             const icon = document.createElement("span");
             icon.className = "material-symbols-outlined";
