@@ -10,9 +10,12 @@
     "test:db": "tsx src/test-db.ts",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --config verification/m3/vitest.config.ts verification/m3/unit verification/m3/functional verification/m3/api",
+    "test:e2e": "playwright test --config verification/m3/playwright.config.ts",
+    "test:performance": "vitest run --config verification/m3/vitest.config.ts verification/m3/performance --reporter=verbose"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.0",
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.6",
     "@types/leaflet": "^1.9.22",

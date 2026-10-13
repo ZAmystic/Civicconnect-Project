@@ -61,8 +61,11 @@ export async function initializeUserNavigation(): Promise<void> {
         "#userManagementNav"
     );
     const settingsLink = document.querySelector<HTMLElement>("#settingsNav");
-    const createTicketLink = document.querySelector<HTMLAnchorElement>(
-        "#createTicketNav"
+    const createTicketLink = document.querySelector<HTMLAnchorElement>("#createTicketNav");
+    const serviceRequestsSection = Array.from(
+        document.querySelectorAll<HTMLElement>(".sidebar-nav .nav-section")
+    ).find((section) =>
+        section.querySelector(".nav-section-title")?.textContent?.trim() === "Service Requests"
     );
     const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
     const requiresUserManagementAccess =
@@ -83,8 +86,12 @@ export async function initializeUserNavigation(): Promise<void> {
         { href: "lost_property.html", icon: "inventory_2", label: "Lost Property" }
     ];
 
-    if (createTicketLink && createTicketLink.dataset.servicePagesAdded !== "true") {
-        let insertionPoint: Element = createTicketLink;
+    if (
+        createTicketLink &&
+        serviceRequestsSection &&
+        serviceRequestsSection.dataset.servicePagesAdded !== "true"
+    ) {
+        let insertionPoint: Element = serviceRequestsSection;
         for (const page of servicePages) {
             const link = document.createElement("a");
             link.className = "nav-item service-page-nav-item";
@@ -103,7 +110,7 @@ export async function initializeUserNavigation(): Promise<void> {
             insertionPoint.insertAdjacentElement("afterend", link);
             insertionPoint = link;
         }
-        createTicketLink.dataset.servicePagesAdded = "true";
+        serviceRequestsSection.dataset.servicePagesAdded = "true";
     }
 
     const fallbackNavItem = currentPath.endsWith("/user_management.html")

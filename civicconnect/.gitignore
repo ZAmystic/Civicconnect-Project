@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 .env
+
+# Generated M3 verification reports
+verification/m3/evidence/*.xml
+verification/m3/evidence/playwright-report/
+test-results/
