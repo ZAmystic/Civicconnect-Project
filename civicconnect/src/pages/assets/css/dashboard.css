@@ -441,3 +441,183 @@ input {
   padding-right: 24px;
   padding-bottom: 24px;
 }
+
+.user-dialog {
+  width: min(560px, calc(100% - 32px));
+  max-width: none;
+  padding: 0;
+  color: #f1f5f9;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 14px;
+  box-shadow: 0 24px 70px rgb(2 6 23 / 55%);
+}
+
+.user-dialog::backdrop {
+  background: rgb(2 6 23 / 72%);
+  backdrop-filter: blur(3px);
+}
+
+.user-dialog form {
+  padding: 24px;
+}
+
+.user-dialog-header,
+.user-dialog-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.user-dialog-eyebrow {
+  margin: 0 0 4px;
+  color: #60a5fa;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.user-dialog-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.user-dialog-close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  color: #cbd5e1;
+  background: #334155;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.user-dialog-close:hover,
+.user-dialog-cancel:hover {
+  background: #475569;
+}
+
+.user-dialog-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.user-dialog-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #cbd5e1;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-dialog-fields .user-dialog-wide {
+  grid-column: 1 / -1;
+}
+
+.user-dialog-fields input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  color: #f1f5f9;
+  background: #0f172a;
+  border: 1px solid #475569;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 400;
+}
+
+.user-dialog-fields input:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 20%);
+}
+
+.user-dialog-message {
+  min-height: 20px;
+  margin: 14px 0 4px;
+  color: #fca5a5;
+  font-size: 13px;
+}
+
+.user-dialog-message.success {
+  color: #6ee7b7;
+}
+
+.account-dialog {
+  width: min(620px, calc(100% - 32px));
+}
+
+.account-dialog-fields {
+  row-gap: 13px;
+}
+
+.account-password-section {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #3a4a60;
+}
+
+.account-password-section h3 {
+  margin: 0 0 6px;
+  color: #f1f5f9;
+  font-size: 15px;
+}
+
+.account-password-section > p {
+  margin: 0 0 14px;
+  color: #94a3b8;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.user-dialog-actions {
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.user-dialog-actions button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.user-dialog-cancel {
+  color: #e2e8f0;
+  background: #334155;
+  border: 1px solid #475569;
+}
+
+.user-dialog-save {
+  color: #ffffff;
+  background: #2563eb;
+  border: 1px solid #3b82f6;
+}
+
+.user-dialog-save:hover {
+  background: #1d4ed8;
+}
+
+.user-dialog-save:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+@media (max-width: 768px) {
+  .user-dialog-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .user-dialog-fields .user-dialog-wide {
+    grid-column: auto;
+  }
+}

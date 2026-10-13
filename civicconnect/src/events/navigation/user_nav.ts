@@ -61,17 +61,63 @@ export async function initializeUserNavigation(): Promise<void> {
         "#userManagementNav"
     );
     const settingsLink = document.querySelector<HTMLElement>("#settingsNav");
-    let signedInUser: CurrentUserResponse["user"];
-
+    const createTicketLink = document.querySelector<HTMLAnchorElement>(
+        "#createTicketNav"
+    );
     const currentPath = window.location.pathname.replace(/\/+$/, "") || "/";
     const requiresUserManagementAccess =
         currentPath.endsWith("/user_management.html") ||
         currentPath.endsWith("/settings.html");
 
+    const servicePages = [
+        { href: "facility_faults.html", icon: "apartment", label: "Facility Faults" },
+        {
+            href: "damaged_equipment.html",
+            icon: "local_shipping",
+            label: "Damaged Equipment"
+        },
+        { href: "general_request.html", icon: "assignment", label: "General Request" },
+        { href: "security_concerns.html", icon: "shield", label: "Security Concerns" },
+        { href: "it_support.html", icon: "laptop", label: "IT Support" },
+        { href: "maintenance_request.html", icon: "handyman", label: "Maintenance" },
+        { href: "lost_property.html", icon: "inventory_2", label: "Lost Property" }
+    ];
+
+    if (createTicketLink && createTicketLink.dataset.servicePagesAdded !== "true") {
+        let insertionPoint: Element = createTicketLink;
+        for (const page of servicePages) {
+            const link = document.createElement("a");
+            link.className = "nav-item service-page-nav-item";
+            link.href = new URL(page.href, window.location.href).pathname;
+            link.style.paddingLeft = "24px";
+
+            const icon = document.createElement("span");
+            icon.className = "material-symbols-outlined";
+            icon.setAttribute("aria-hidden", "true");
+            icon.textContent = page.icon;
+
+            const label = document.createElement("span");
+            label.textContent = page.label;
+
+            link.append(icon, label);
+            insertionPoint.insertAdjacentElement("afterend", link);
+            insertionPoint = link;
+        }
+        createTicketLink.dataset.servicePagesAdded = "true";
+    }
+
+    const fallbackNavItem = currentPath.endsWith("/user_management.html")
+        ? userManagementLink
+        : currentPath.endsWith("/settings.html")
+          ? settingsLink
+          : document.getElementById("requesterNav");
+    let signedInUser: CurrentUserResponse["user"];
+
     const redirectToNotFound = (): void => {
         window.location.replace("/src/pages/404.html");
     };
 
+    let matchedNavItem = false;
     document.querySelectorAll<HTMLAnchorElement>(".sidebar-nav .nav-item[href]").forEach((item) => {
         item.classList.remove("active");
         item.removeAttribute("aria-current");
@@ -86,8 +132,14 @@ export async function initializeUserNavigation(): Promise<void> {
         if (target.origin === window.location.origin && targetPath === currentPath) {
             item.classList.add("active");
             item.setAttribute("aria-current", "page");
+            matchedNavItem = true;
         }
     });
+
+    if (!matchedNavItem && fallbackNavItem) {
+        fallbackNavItem.classList.add("active");
+        fallbackNavItem.setAttribute("aria-current", "page");
+    }
 
     if (userManagementLink) {
         userManagementLink.hidden = true;
