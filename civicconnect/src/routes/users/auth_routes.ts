@@ -135,11 +135,12 @@ router.post("/login", async (req: Request, res: Response) => {
 
         // Find the user in Supabase PostgreSQL
         const schema = await getUserTableSchema();
-        const result = await dbPool.query<Pick<User, "user_id" | "password_hash">>(
+        const result = await dbPool.query<Pick<User, "user_id" | "password_hash" | "role">>(
             `
             SELECT
                 user_id,
-                ${schema.passwordColumn} AS password_hash
+                ${schema.passwordColumn} AS password_hash,
+                role
             FROM "User"
             WHERE LOWER(email) = LOWER($1)
               AND LOWER(account_status::text) IN ('active', 'true')
@@ -170,7 +171,7 @@ router.post("/login", async (req: Request, res: Response) => {
             });
         }
 
-        await setUserSession(res, user.user_id);
+        await setUserSession(res, user.user_id, user.role);
 
         // Successful login
         return res.status(200).json({

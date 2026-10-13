@@ -25,6 +25,7 @@ if (!configuredSecret) {
 
 interface SessionPayload {
     userId: number;
+    role: string;
     expiresAt: number;
 }
 
@@ -55,11 +56,16 @@ async function getSessionLifetimeSeconds(): Promise<number> {
     return lifetimeSeconds;
 }
 
-export async function setUserSession(res: Response, userId: number): Promise<void> {
+export async function setUserSession(
+    res: Response,
+    userId: number,
+    role: string
+): Promise<void> {
     const sessionLifetimeSeconds = await getSessionLifetimeSeconds();
     const payload = Buffer.from(
         JSON.stringify({
             userId,
+            role,
             expiresAt: Date.now() + sessionLifetimeSeconds * 1000
         } satisfies SessionPayload)
     ).toString("base64url");
@@ -158,4 +164,34 @@ export async function hasUserManagementAccess(req: Request): Promise<boolean> {
         String(user.account_status).toLowerCase() === "true";
 
     return isActive && (user.role === "Admin" || user.role === "Manager");
+}
+
+export async function hasAuditLogAccess(req: Request): Promise<boolean> {
+    const userId = getSessionUserId(req);
+    if (userId === null) {
+        return false;
+    }
+
+    const result = await dbPool.query<{
+        role: string;
+        account_status: boolean | string;
+    }>(
+        `
+        SELECT role, account_status
+        FROM "User"
+        WHERE user_id = $1
+        `,
+        [userId]
+    );
+    const user = result.rows[0];
+
+    if (!user) {
+        return false;
+    }
+
+    const isActive = user.account_status === true ||
+        String(user.account_status).toLowerCase() === "active" ||
+        String(user.account_status).toLowerCase() === "true";
+
+    return isActive && ["Staff", "Manager", "Admin"].includes(user.role);
 }

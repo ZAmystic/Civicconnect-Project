@@ -64,7 +64,9 @@ router.get("/me", async (req: Request, res: Response) => {
                 full_surname: user.full_surname,
                 email: user.email,
                 role: user.role,
-                canManageUsers: user.role === "Admin" || user.role === "Manager"
+                canManageUsers: user.role === "Admin" || user.role === "Manager",
+                canViewAuditLogs:
+                    user.role === "Staff" || user.role === "Manager" || user.role === "Admin"
             }
         });
     } catch (error) {

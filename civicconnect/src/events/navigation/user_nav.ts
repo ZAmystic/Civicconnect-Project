@@ -1,5 +1,3 @@
-import { assessPasswordStrength } from "../../utils/password_strength";
-
 interface CurrentUserResponse {
     success: boolean;
     user?: {
@@ -8,7 +6,16 @@ interface CurrentUserResponse {
         email: string;
         role: string;
         canManageUsers: boolean;
+        canViewAuditLogs: boolean;
     };
+}
+
+interface CachedNavigationUser {
+    full_name: string;
+    full_surname: string | null;
+    role: string;
+    canManageUsers: boolean;
+    canViewAuditLogs: boolean;
 }
 
 interface AccountUpdateResponse {
@@ -19,6 +26,57 @@ interface AccountUpdateResponse {
         full_surname: string | null;
         email: string;
     };
+}
+
+const navigationUserStorageKey = "civicconnect_current_user";
+
+function readCachedNavigationUser(): CachedNavigationUser | null {
+    try {
+        const value: unknown = JSON.parse(
+            sessionStorage.getItem(navigationUserStorageKey) ?? "null"
+        );
+        if (
+            typeof value !== "object" ||
+            value === null ||
+            !("full_name" in value) ||
+            typeof value.full_name !== "string" ||
+            !("full_surname" in value) ||
+            (value.full_surname !== null && typeof value.full_surname !== "string") ||
+            !("role" in value) ||
+            typeof value.role !== "string" ||
+            !("canManageUsers" in value) ||
+            typeof value.canManageUsers !== "boolean" ||
+            !("canViewAuditLogs" in value) ||
+            typeof value.canViewAuditLogs !== "boolean"
+        ) {
+            return null;
+        }
+        return {
+            full_name: value.full_name,
+            full_surname: value.full_surname,
+            role: value.role,
+            canManageUsers: value.canManageUsers,
+            canViewAuditLogs: value.canViewAuditLogs
+        };
+    } catch {
+        return null;
+    }
+}
+
+function cacheNavigationUser(user: CachedNavigationUser): void {
+    try {
+        sessionStorage.setItem(navigationUserStorageKey, JSON.stringify(user));
+    } catch (error) {
+        console.warn("Unable to cache navigation details for this tab:", error);
+    }
+}
+
+function clearCachedNavigationUser(): void {
+    try {
+        sessionStorage.removeItem(navigationUserStorageKey);
+    } catch (error) {
+        console.warn("Unable to clear cached navigation details:", error);
+    }
 }
 
 export async function initializeUserNavigation(): Promise<void> {
@@ -61,6 +119,49 @@ export async function initializeUserNavigation(): Promise<void> {
         "#userManagementNav"
     );
     const settingsLink = document.querySelector<HTMLElement>("#settingsNav");
+    const navigation = document.querySelector<HTMLElement>(".sidebar-nav");
+    const administrationSection = Array.from(
+        navigation?.querySelectorAll<HTMLElement>(".nav-section") ?? []
+    ).find((section) =>
+        section.querySelector(".nav-section-title")?.textContent?.trim() === "Administration"
+    );
+    let auditLogsLink = document.querySelector<HTMLAnchorElement>("#auditLogsNav");
+    if (!auditLogsLink && navigation) {
+        auditLogsLink = Array.from(
+            navigation.querySelectorAll<HTMLAnchorElement>(".nav-item")
+        ).find((link) =>
+            link.querySelector("span:last-child")?.textContent?.trim() === "Audit Logs"
+        ) ?? null;
+    }
+    if (!auditLogsLink && navigation) {
+        auditLogsLink = document.createElement("a");
+        auditLogsLink.className = "nav-item";
+        auditLogsLink.id = "auditLogsNav";
+        auditLogsLink.innerHTML =
+            '<span class="material-symbols-outlined" aria-hidden="true">history</span><span>Audit Logs</span>';
+        navigation.append(auditLogsLink);
+    }
+    if (auditLogsLink) {
+        auditLogsLink.id = "auditLogsNav";
+        auditLogsLink.href = "aduit_logs.html";
+        auditLogsLink.hidden = true;
+    }
+    if (userManagementLink) {
+        userManagementLink.hidden = true;
+    }
+    if (settingsLink) {
+        settingsLink.hidden = true;
+    }
+    const updateAdministrationSection = (): void => {
+        if (administrationSection) {
+            administrationSection.hidden = ![
+                userManagementLink,
+                settingsLink,
+                auditLogsLink
+            ].some((link) => link && !link.hidden);
+        }
+    };
+    updateAdministrationSection();
     const createTicketLink = document.querySelector<HTMLAnchorElement>("#createTicketNav");
     const serviceRequestsSection = Array.from(
         document.querySelectorAll<HTMLElement>(".sidebar-nav .nav-section")
@@ -71,6 +172,9 @@ export async function initializeUserNavigation(): Promise<void> {
     const requiresUserManagementAccess =
         currentPath.endsWith("/user_management.html") ||
         currentPath.endsWith("/settings.html");
+    const requiresAuditLogAccess = currentPath.endsWith("/aduit_logs.html");
+    const requiresProtectedPageAccess =
+        requiresUserManagementAccess || requiresAuditLogAccess;
 
     const servicePages = [
         { href: "facility_faults.html", icon: "apartment", label: "Facility Faults" },
@@ -120,6 +224,33 @@ export async function initializeUserNavigation(): Promise<void> {
           : document.getElementById("requesterNav");
     let signedInUser: CurrentUserResponse["user"];
 
+    const applyNavigationUser = (user: CachedNavigationUser): void => {
+        const displayName = [user.full_name, user.full_surname]
+            .filter((part) => part?.trim())
+            .join(" ");
+        if (nameElement) {
+            nameElement.textContent = displayName || "User";
+        }
+        if (roleElement) {
+            roleElement.textContent = user.role;
+        }
+        if (userManagementLink) {
+            userManagementLink.hidden = !user.canManageUsers;
+        }
+        if (settingsLink) {
+            settingsLink.hidden = !user.canManageUsers;
+        }
+        if (auditLogsLink) {
+            auditLogsLink.hidden = !user.canViewAuditLogs;
+        }
+        updateAdministrationSection();
+    };
+
+    const cachedUser = readCachedNavigationUser();
+    if (cachedUser) {
+        applyNavigationUser(cachedUser);
+    }
+
     const redirectToNotFound = (): void => {
         window.location.replace("/src/pages/404.html");
     };
@@ -151,10 +282,17 @@ export async function initializeUserNavigation(): Promise<void> {
     if (userManagementLink) {
         userManagementLink.hidden = true;
     }
+    if (settingsLink) {
+        settingsLink.hidden = true;
+    }
+    if (auditLogsLink) {
+        auditLogsLink.hidden = true;
+    }
+    updateAdministrationSection();
     try {
         const response = await fetch("/api/users/me");
         if (!response.ok) {
-            if (requiresUserManagementAccess) {
+            if (requiresProtectedPageAccess) {
                 redirectToNotFound();
                 return;
             }
@@ -163,35 +301,31 @@ export async function initializeUserNavigation(): Promise<void> {
 
         const data: CurrentUserResponse = await response.json();
         if (!data.success || !data.user) {
-            if (requiresUserManagementAccess) {
+            if (requiresProtectedPageAccess) {
                 redirectToNotFound();
                 return;
             }
             throw new Error("Current-user response is invalid.");
         }
         signedInUser = data.user;
-        if (requiresUserManagementAccess && !data.user.canManageUsers) {
+        if (
+            (requiresUserManagementAccess && !data.user.canManageUsers) ||
+            (requiresAuditLogAccess && !data.user.canViewAuditLogs)
+        ) {
             redirectToNotFound();
             return;
         }
 
-        const displayName = [data.user.full_name, data.user.full_surname]
-            .filter((part) => part?.trim())
-            .join(" ");
-        if (nameElement) {
-            nameElement.textContent = displayName || "User";
-        }
-        if (roleElement) {
-            roleElement.textContent = data.user.role;
-        }
-        if (userManagementLink) {
-            userManagementLink.hidden = !data.user.canManageUsers;
-        }
-        if (settingsLink) {
-            settingsLink.hidden = !data.user.canManageUsers;
-        }
+        applyNavigationUser(data.user);
+        cacheNavigationUser({
+            full_name: data.user.full_name,
+            full_surname: data.user.full_surname,
+            role: data.user.role,
+            canManageUsers: data.user.canManageUsers,
+            canViewAuditLogs: data.user.canViewAuditLogs
+        });
     } catch (error) {
-        if (requiresUserManagementAccess) {
+        if (requiresProtectedPageAccess) {
             console.error("Unable to verify access to this page:", error);
             redirectToNotFound();
             return;
@@ -247,6 +381,7 @@ export async function initializeUserNavigation(): Promise<void> {
             if (!response.ok || !data.success) {
                 throw new Error(data.message || "Unable to sign out.");
             }
+            clearCachedNavigationUser();
             window.location.replace("/src/pages/login.html");
         } catch (error) {
             if (signOutButton) signOutButton.disabled = false;
@@ -295,6 +430,9 @@ export async function initializeUserNavigation(): Promise<void> {
                 if (newPassword !== confirmPassword) {
                     throw new Error("New password and confirmation do not match.");
                 }
+                const { assessPasswordStrength } = await import(
+                    "../../utils/password_strength"
+                );
                 const assessment = await assessPasswordStrength(newPassword);
                 if (assessment.score < assessment.minimumStrength) {
                     throw new Error(
@@ -328,6 +466,13 @@ export async function initializeUserNavigation(): Promise<void> {
                 ...signedInUser,
                 ...data.user
             };
+            cacheNavigationUser({
+                full_name: signedInUser.full_name,
+                full_surname: signedInUser.full_surname,
+                role: signedInUser.role,
+                canManageUsers: signedInUser.canManageUsers,
+                canViewAuditLogs: signedInUser.canViewAuditLogs
+            });
             if (nameElement) {
                 nameElement.textContent = [data.user.full_name, data.user.full_surname]
                     .filter((part) => part?.trim())

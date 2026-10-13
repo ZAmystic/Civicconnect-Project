@@ -59,6 +59,11 @@ loginForm?.addEventListener("submit", async (event) => {
             return;
         }
 
+        try {
+            sessionStorage.removeItem("civicconnect_current_user");
+        } catch (error) {
+            console.warn("Unable to clear cached user details before navigation:", error);
+        }
         // Redirect after successful authentication
         window.location.assign("/src/pages/dashboard.html");
 

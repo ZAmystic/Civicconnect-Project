@@ -12,12 +12,12 @@
     "max_login_attempts": 5
   },
   "users": {
-    "allow_user_registration": false,
+    "allow_user_registration": true,
     "default_user_role": "Citizen",
     "allow_profile_editing": true
   },
   "audit": {
-    "enable_audit_logging": true,
+    "enable_audit_logging": false,
     "log_failed_login_attempts": true,
     "audit_log_retention_days": 90
   },
