@@ -152,6 +152,30 @@ export async function initializeUserNavigation(): Promise<void> {
     if (settingsLink) {
         settingsLink.hidden = true;
     }
+    let ticketManagementLink = document.querySelector<HTMLAnchorElement>(
+        "#ticketManagementNav"
+    );
+    if (!ticketManagementLink && navigation) {
+        ticketManagementLink = document.createElement("a");
+        ticketManagementLink.className = "nav-item";
+        ticketManagementLink.id = "ticketManagementNav";
+        ticketManagementLink.innerHTML =
+            '<span class="material-symbols-outlined" aria-hidden="true">confirmation_number</span><span>Ticket Management</span>';
+        const operationsSection = Array.from(
+            navigation.querySelectorAll<HTMLElement>(".nav-section")
+        ).find((section) =>
+            section.querySelector(".nav-section-title")?.textContent?.trim() === "Operations"
+        );
+        if (operationsSection) {
+            operationsSection.insertAdjacentElement("afterend", ticketManagementLink);
+        } else {
+            navigation.append(ticketManagementLink);
+        }
+    }
+    if (ticketManagementLink) {
+        ticketManagementLink.href = "ticket_management.html";
+        ticketManagementLink.hidden = true;
+    }
     const updateAdministrationSection = (): void => {
         if (administrationSection) {
             administrationSection.hidden = ![
@@ -173,8 +197,12 @@ export async function initializeUserNavigation(): Promise<void> {
         currentPath.endsWith("/user_management.html") ||
         currentPath.endsWith("/settings.html");
     const requiresAuditLogAccess = currentPath.endsWith("/aduit_logs.html");
+    const requiresTicketManagementAccess =
+        currentPath.endsWith("/ticket_management.html");
     const requiresProtectedPageAccess =
-        requiresUserManagementAccess || requiresAuditLogAccess;
+        requiresUserManagementAccess ||
+        requiresAuditLogAccess ||
+        requiresTicketManagementAccess;
 
     const servicePages = [
         { href: "facility_faults.html", icon: "apartment", label: "Facility Faults" },
@@ -241,6 +269,9 @@ export async function initializeUserNavigation(): Promise<void> {
         }
         if (auditLogsLink) {
             auditLogsLink.hidden = !user.canViewAuditLogs;
+        }
+        if (ticketManagementLink) {
+            ticketManagementLink.hidden = !user.canViewAuditLogs;
         }
         updateAdministrationSection();
     };
@@ -309,7 +340,8 @@ export async function initializeUserNavigation(): Promise<void> {
         signedInUser = data.user;
         if (
             (requiresUserManagementAccess && !data.user.canManageUsers) ||
-            (requiresAuditLogAccess && !data.user.canViewAuditLogs)
+            ((requiresAuditLogAccess || requiresTicketManagementAccess) &&
+                !data.user.canViewAuditLogs)
         ) {
             redirectToNotFound();
             return;

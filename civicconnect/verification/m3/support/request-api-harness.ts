@@ -2,7 +2,8 @@ import { vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
     getSessionUserId: vi.fn(),
-    connect: vi.fn()
+    connect: vi.fn(),
+    query: vi.fn()
 }));
 
 vi.mock("../../../src/auth/user_session", () => ({
@@ -10,7 +11,7 @@ vi.mock("../../../src/auth/user_session", () => ({
 }));
 
 vi.mock("../../../src/config/database", () => ({
-    dbPool: { connect: mocks.connect }
+    dbPool: { connect: mocks.connect, query: mocks.query }
 }));
 
 const { default: requestRoutes } = await import("../../../src/routes/request_routes");
@@ -30,7 +31,11 @@ export interface HarnessOptions {
     sessionUserId?: number | null;
     accountStatus?: boolean | string;
     failDetailInsert?: boolean;
+    failEditAuditInsert?: boolean;
+    missingTicketEditAuditTable?: boolean;
     lastTrackingNumber?: string;
+    editTicketStatus?: string;
+    editTicketNotFound?: boolean;
 }
 
 export interface RequestApiHarness {
@@ -69,6 +74,28 @@ export function resetRequestApiHarness(options: HarnessOptions = {}): RequestApi
     const lastTrackingNumber = options.lastTrackingNumber ?? "1025";
 
     mocks.getSessionUserId.mockReturnValue(userId);
+    mocks.query.mockImplementation(async (sql: string, params: unknown[] = []) => {
+        const normalizedSql = sql.replace(/\s+/g, " ").trim();
+        calls.push({ sql: normalizedSql, params });
+        if (normalizedSql.includes('SELECT account_status FROM "User"')) {
+            return { rows: [{ account_status: status }] };
+        }
+        if (normalizedSql.includes("WITH scoped_tickets AS")) {
+            return {
+                rows: [{
+                    total_tickets: 3,
+                    active_tickets: 1,
+                    completed_tickets: 1,
+                    rejected_tickets: 1,
+                    recent_tickets: 2,
+                    last_activity_at: "2026-10-14T10:00:00.000Z",
+                    tickets: []
+                }]
+            };
+        }
+        return { rows: [] };
+    });
+
     const client = {
         query: vi.fn(async (sql: string, params: unknown[] = []) => {
             const normalizedSql = sql.replace(/\s+/g, " ").trim();
@@ -76,6 +103,46 @@ export function resetRequestApiHarness(options: HarnessOptions = {}): RequestApi
 
             if (normalizedSql.includes('SELECT account_status FROM "User"')) {
                 return { rows: [{ account_status: status }] };
+            }
+            if (normalizedSql.includes("FOR UPDATE OF ticket")) {
+                if (options.editTicketNotFound) {
+                    return { rows: [] };
+                }
+                return {
+                    rows: [{
+                        ticket_id: "7",
+                        category_name: "Damaged Equipment",
+                        description: "A damaged bench.",
+                        status: options.editTicketStatus ?? "Submitted",
+                        updated_at: "2026-10-14T10:00:00.000Z",
+                        details: {
+                            equipmentType: "Park Bench / Table",
+                            assetId: "BENCH-22",
+                            location: "Civic Park",
+                            locationLatitude: 12.5,
+                            locationLongitude: -45.25,
+                            damageType: ["broken-vandalized"],
+                            operationalStatus: "out-of-service",
+                            description: "A damaged bench."
+                        }
+                    }]
+                };
+            }
+            if (normalizedSql.includes('INSERT INTO "TicketEditAudit"')) {
+                if (options.missingTicketEditAuditTable) {
+                    throw Object.assign(new Error('relation "TicketEditAudit" does not exist'), {
+                        code: "42P01"
+                    });
+                }
+                if (options.failEditAuditInsert) {
+                    throw new Error("Simulated ticket edit audit failure.");
+                }
+            }
+            if (/^UPDATE "(?:DamagedEquipmentDetails|SecurityConcernDetails|ITSupportDetails|MaintenanceDetails|LostPropertyDetails|GeneralRequestDetails|FacilityFaultDetails)"/.test(normalizedSql)) {
+                return { rows: [], rowCount: 1 };
+            }
+            if (normalizedSql.includes("UPDATE \"Ticket\"")) {
+                return { rows: [{ updated_at: "2026-10-14T11:00:00.000Z" }] };
             }
             if (normalizedSql.includes('SELECT category_id FROM "ServiceCategory"')) {
                 return { rows: [{ category_id: 7 }] };

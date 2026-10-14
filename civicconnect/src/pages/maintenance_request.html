@@ -37,7 +37,7 @@
         </div>
         <a class="nav-item" id="requesterNav" href="dashboard.html">
           <span class="material-symbols-outlined">person</span>
-          <span>Requester</span>
+          <span>My requests</span>
         </a>
         <a class="nav-item" id="createTicketNav" href="services.html">
           <span class="material-symbols-outlined">add_circle</span>
@@ -168,18 +168,17 @@
                 <p class="card-text">Identify the work needed and where the issue is located.</p>
               </div>
               <div class="form-grid">
-                <div class="form-group">
-                  <label for="maintenanceType">Maintenance type <span aria-hidden="true">*</span></label>
-                  <select id="maintenanceType" name="maintenanceType" required>
-                    <option value="">Select a maintenance type</option>
-                    <option>Pothole / Road Degradation</option>
-                    <option>Water Pipe Leak / Burst</option>
-                    <option>Overgrown Vegetation / Fallen Tree Limb</option>
-                    <option>Streetlight Failure</option>
-                    <option>Illegal Dumping / Trash Accumulation</option>
-                    <option>Drainage / Stormwater Blockage</option>
-                  </select>
-                </div>
+                <fieldset class="choice-fieldset form-group-wide">
+                  <legend class="choice-legend">Maintenance type <span aria-hidden="true">*</span></legend>
+                  <div class="urgency-grid compact-radio-grid">
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Pothole / Road Degradation" required><span class="urgency-copy"><span class="urgency-heading"><strong>Pothole / Road Degradation</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Water Pipe Leak / Burst" required><span class="urgency-copy"><span class="urgency-heading"><strong>Water Pipe Leak / Burst</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Overgrown Vegetation / Fallen Tree Limb" required><span class="urgency-copy"><span class="urgency-heading"><strong>Overgrown Vegetation / Fallen Tree Limb</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Streetlight Failure" required><span class="urgency-copy"><span class="urgency-heading"><strong>Streetlight Failure</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Illegal Dumping / Trash Accumulation" required><span class="urgency-copy"><span class="urgency-heading"><strong>Illegal Dumping / Trash Accumulation</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="maintenanceType" type="radio" value="Drainage / Stormwater Blockage" required><span class="urgency-copy"><span class="urgency-heading"><strong>Drainage / Stormwater Blockage</strong></span></span></label>
+                  </div>
+                </fieldset>
                 <div class="form-group">
                   <label for="maintenanceLocation">Specific location <span aria-hidden="true">*</span></label>
                   <div class="maps-search-control">
@@ -209,21 +208,20 @@
               <fieldset class="choice-fieldset form-section-gap">
                 <legend class="choice-legend">Utility involvement <span class="field-optional">(select all that apply)</span></legend>
                 <div class="checkbox-grid">
-                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" value="gushing-water"><span>Gushing Water</span></label>
-                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" value="exposed-line"><span>Exposed Gas / Power Line</span></label>
-                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" value="sewage-odor"><span>Odor / Sewage Leak</span></label>
+                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" data-multi-select value="gushing-water"><span>Gushing Water</span></label>
+                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" data-multi-select value="exposed-line"><span>Exposed Gas / Power Line</span></label>
+                  <label class="checkbox-option"><input name="utilityInvolvement" type="checkbox" data-multi-select value="sewage-odor"><span>Odor / Sewage Leak</span></label>
                 </div>
               </fieldset>
               <div class="form-grid form-section-gap">
-                <div class="form-group">
-                  <label for="maintenanceSize">Estimated size / extent <span aria-hidden="true">*</span></label>
-                  <select id="maintenanceSize" name="estimatedSize" required>
-                    <option value="">Select approximate size</option>
-                    <option>Small &lt;1m²</option>
-                    <option>Moderate 1–5m²</option>
-                    <option>Extensive &gt;5m²</option>
-                  </select>
-                </div>
+                <fieldset class="choice-fieldset form-group-wide">
+                  <legend class="choice-legend">Estimated size / extent <span aria-hidden="true">*</span></legend>
+                  <div class="urgency-grid compact-radio-grid">
+                    <label class="urgency-option compact-radio-option"><input name="estimatedSize" type="radio" value="Small <1m²" required><span class="urgency-copy"><span class="urgency-heading"><strong>Small &lt;1m²</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="estimatedSize" type="radio" value="Moderate 1–5m²" required><span class="urgency-copy"><span class="urgency-heading"><strong>Moderate 1–5m²</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="estimatedSize" type="radio" value="Extensive >5m²" required><span class="urgency-copy"><span class="urgency-heading"><strong>Extensive &gt;5m²</strong></span></span></label>
+                  </div>
+                </fieldset>
                 <div class="form-group form-group-wide">
                   <label for="maintenanceDescription">Additional details <span aria-hidden="true">*</span></label>
                   <textarea id="maintenanceDescription" name="description" rows="4" maxlength="3000" placeholder="Describe the issue, its extent, and any safety concerns..." required></textarea>
