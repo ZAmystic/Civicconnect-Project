@@ -43,7 +43,7 @@
         </div>
         <a class="nav-item" id="requesterNav" href="dashboard.html">
           <span class="material-symbols-outlined">person</span>
-          <span>Requester</span>
+          <span>My Requests</span>
         </a>
         <a class="nav-item" id="createTicketNav" href="services.html">
           <span class="material-symbols-outlined">add_circle</span>
@@ -126,7 +126,7 @@
     <header class="top-header">
       <div class="search-container">
         <span class="material-symbols-outlined search-icon">search</span>
-        <input class="search-input" placeholder="Search requests, ticket #, or citizens..." type="text"/>
+        <input class="search-input" id="dashboardSearch" placeholder="Search your requests or reference..." type="search" aria-label="Search your requests"/>
       </div>
       
       <div class="header-actions">
@@ -151,11 +151,167 @@
 
     <!-- Main Dashboard Area -->
     <main class="dashboard-content">
-            
-        
-      
+      <section class="requester-dashboard" aria-labelledby="dashboardTitle">
+        <div class="dashboard-heading">
+          <div>
+            <p class="dashboard-eyebrow">Requester overview</p>
+            <h1 id="dashboardTitle">Your service requests</h1>
+            <p class="dashboard-intro">A clear view of the requests you have submitted and their latest progress.</p>
+          </div>
+          <a class="btn-primary dashboard-create-link" href="services.html">
+            <span class="material-symbols-outlined" aria-hidden="true">add</span>
+            <span>New request</span>
+          </a>
+        </div>
+
+        <section class="dashboard-metrics" aria-label="Your request statistics">
+          <article class="metric-card">
+            <div class="metric-card-top"><span class="metric-label">Total requests</span><span class="material-symbols-outlined metric-icon">description</span></div>
+            <strong class="metric-value" id="totalRequests">--</strong>
+            <span class="metric-note">Submitted by you</span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-card-top"><span class="metric-label">In progress</span><span class="material-symbols-outlined metric-icon metric-icon-blue">pending_actions</span></div>
+            <strong class="metric-value" id="activeRequests">--</strong>
+            <span class="metric-note">Awaiting completion</span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-card-top"><span class="metric-label">Completed</span><span class="material-symbols-outlined metric-icon metric-icon-green">task_alt</span></div>
+            <strong class="metric-value" id="completedRequests">--</strong>
+            <span class="metric-note">Resolved or closed</span>
+          </article>
+          <article class="metric-card">
+            <div class="metric-card-top"><span class="metric-label">Last 30 days</span><span class="material-symbols-outlined metric-icon metric-icon-amber">calendar_month</span></div>
+            <strong class="metric-value" id="recentRequests">--</strong>
+            <span class="metric-note">Recently submitted</span>
+          </article>
+        </section>
+
+        <section class="dashboard-status-panel" aria-labelledby="statusTitle">
+          <div class="status-panel-heading">
+            <div>
+              <h2 id="statusTitle">Request outcomes</h2>
+              <p>How your submitted requests are progressing</p>
+            </div>
+            <p class="completion-rate"><strong id="completionRate">--</strong><span>completed</span></p>
+          </div>
+          <div class="outcome-track" role="img" aria-label="Request outcomes breakdown">
+            <span class="outcome-segment outcome-active" id="activeSegment"></span>
+            <span class="outcome-segment outcome-completed" id="completedSegment"></span>
+            <span class="outcome-segment outcome-rejected" id="rejectedSegment"></span>
+          </div>
+          <div class="outcome-legend">
+            <span><i class="legend-dot dot-active"></i>In progress <strong id="activeOutcomeCount">--</strong></span>
+            <span><i class="legend-dot dot-completed"></i>Completed <strong id="completedOutcomeCount">--</strong></span>
+            <span><i class="legend-dot dot-rejected"></i>Not approved <strong id="rejectedOutcomeCount">--</strong></span>
+          </div>
+          <p class="last-activity" id="lastActivity">Loading your request activity...</p>
+        </section>
+
+        <section class="recent-requests" aria-labelledby="recentRequestsTitle">
+          <div class="recent-requests-heading">
+            <div>
+              <h2 id="recentRequestsTitle">Recent requests</h2>
+              <p>Your latest submissions and their current status</p>
+            </div>
+            <div class="recent-requests-actions">
+              <span class="recent-limit" id="recentLimit">Latest 8</span>
+              <button class="history-link" id="openRequestHistory" type="button" aria-haspopup="dialog">
+                <span class="material-symbols-outlined" aria-hidden="true">history</span>
+                View full history
+              </button>
+            </div>
+          </div>
+          <div class="request-list" id="requestList" aria-live="polite" aria-busy="true">
+            <p class="request-list-message">Loading your requests...</p>
+          </div>
+        </section>
+      </section>
     </main>
   </div>
+
+  <dialog class="request-dialog" id="requestHistoryDialog" aria-labelledby="requestHistoryTitle">
+    <div class="request-dialog-header">
+      <div>
+        <p class="request-dialog-eyebrow">Your activity</p>
+        <h2 id="requestHistoryTitle">Full request history</h2>
+        <p class="request-dialog-intro">Every service request you have submitted, newest first.</p>
+      </div>
+      <button class="request-dialog-close" id="closeRequestHistory" type="button" aria-label="Close request history">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="request-history-list" id="requestHistoryList" aria-live="polite" aria-busy="true">
+      <p class="request-list-message">Loading your request history...</p>
+    </div>
+  </dialog>
+
+  <dialog class="request-dialog request-details-dialog" id="requestDetailsDialog" aria-labelledby="requestDetailsTitle">
+    <div class="request-dialog-header">
+      <div>
+        <p class="request-dialog-eyebrow" id="requestDetailsReference"></p>
+        <h2 id="requestDetailsTitle">Request details</h2>
+      </div>
+      <button class="request-dialog-close" id="closeRequestDetails" type="button" aria-label="Close request details">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <section class="request-detail-summary" aria-label="Request status and dates">
+      <div>
+        <span class="request-detail-label">Current status</span>
+        <span class="request-status" id="requestDetailsStatus"></span>
+        <p class="request-detail-status-message" id="requestDetailsStatusMessage"></p>
+      </div>
+      <div>
+        <span class="request-detail-label">Submitted</span>
+        <strong id="requestDetailsSubmitted"></strong>
+      </div>
+      <div>
+        <span class="request-detail-label">Last updated</span>
+        <strong id="requestDetailsUpdated"></strong>
+      </div>
+    </section>
+    <div class="request-edit-actions">
+      <button class="history-link request-cancel-button" id="cancelRequestDetails" type="button" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">cancel</span>
+        Cancel request
+      </button>
+      <button class="history-link" id="editRequestDetails" type="button" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+        Edit request details
+      </button>
+    </div>
+    <section class="request-detail-section" aria-labelledby="requestDetailSectionTitle">
+      <h3 id="requestDetailSectionTitle">Request details</h3>
+      <dl class="request-detail-fields" id="requestDetailsFields"></dl>
+    </section>
+  </dialog>
+
+  <dialog class="request-dialog request-edit-dialog" id="requestEditDialog" aria-labelledby="requestEditTitle">
+    <form id="requestEditForm">
+      <div class="request-dialog-header">
+        <div>
+          <p class="request-dialog-eyebrow">Submitted request</p>
+          <h2 id="requestEditTitle">Correct request details</h2>
+          <p class="request-dialog-intro">You can edit this request only while it is awaiting review.</p>
+        </div>
+        <button class="request-dialog-close" id="closeRequestEdit" type="button" aria-label="Close edit request dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="request-edit-content">
+        <div class="request-edit-fields" id="requestEditFields"></div>
+        <p class="request-edit-message" id="requestEditMessage" role="status" aria-live="polite"></p>
+        <div class="request-edit-footer">
+          <span>Changes are recorded in the audit log.</span>
+          <div>
+            <button class="user-dialog-cancel" id="cancelRequestEdit" type="button">Cancel</button>
+            <button class="user-dialog-save" id="saveRequestEdit" type="submit">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </dialog>
 
   <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
     <form id="accountSettingsForm">
@@ -215,21 +371,11 @@
     </form>
   </dialog>
 
-  <script>
-    function selectTicket(id, title, priority, dept, sla, location, tech, desc) {
-      document.getElementById('ticketIdBadge').innerText = '#' + id;
-      document.getElementById('ticketTitlePreview').innerText = title;
-      document.getElementById('ticketPriorityBadge').innerText = priority + ' Priority';
-      document.getElementById('ticketDept').innerText = dept;
-      document.getElementById('ticketSla').innerText = sla;
-      document.getElementById('ticketLocation').innerHTML = '<span class="material-symbols-outlined text-blue icon-small">pin_drop</span> ' + location;
-      document.getElementById('technicianName').innerText = tech;
-      document.getElementById('ticketDesc').innerText = desc;
-    }
-  </script>
   <script type="module">
     import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    import { initializeRequesterDashboard } from "/src/events/requester_dashboard.ts";
     void initializeUserNavigation();
+    void initializeRequesterDashboard();
   </script>
 </body>
 </html>

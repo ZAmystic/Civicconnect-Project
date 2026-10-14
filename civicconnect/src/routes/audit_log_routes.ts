@@ -9,7 +9,8 @@ const allowedStatuses = [
     "In_Progress",
     "Resolved",
     "Closed",
-    "Rejected"
+    "Rejected",
+    "Cancelled"
 ] as const;
 const pageSize = 25;
 const maximumPage = 100_000;
