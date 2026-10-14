@@ -47,6 +47,18 @@ function serializeForm(form: HTMLFormElement): Record<string, string | string[] 
             details[checkbox.name] = checkbox.checked;
         }
     }
+    const multiSelectNames = new Set(
+        Array.from(
+            form.querySelectorAll<HTMLInputElement>('input[type="checkbox"][data-multi-select][name]')
+        ).map((checkbox) => checkbox.name)
+    );
+    for (const name of multiSelectNames) {
+        details[name] = Array.from(
+            form.querySelectorAll<HTMLInputElement>(
+                `input[type="checkbox"][data-multi-select][name="${name}"]:checked`
+            )
+        ).map((checkbox) => checkbox.value);
+    }
     return details;
 }
 

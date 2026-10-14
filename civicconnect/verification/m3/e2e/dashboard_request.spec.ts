@@ -114,7 +114,7 @@ test("[E2E-02] requester can navigate from dashboard and submit a damaged-equipm
             details: {
                 equipmentType: "Park Bench / Table",
                 location: "Civic Park",
-                damageType: "broken-vandalized",
+                damageType: ["broken-vandalized", "sharp-edge"],
                 operationalStatus: "out-of-service"
             }
         });
@@ -132,15 +132,56 @@ test("[E2E-02] requester can navigate from dashboard and submit a damaged-equipm
     await page.locator("#createTicketNav").click();
     await page.locator('.service-card-btn[href="damaged_equipment.html"]').click();
 
-    await page.locator("#equipmentType").selectOption("Park Bench / Table");
+    await page.locator('input[name="equipmentType"][value="Park Bench / Table"]').check();
     await page.locator("#equipmentLocation").fill("Civic Park");
     await page.locator('input[name="damageType"][value="broken-vandalized"]').check();
+    await page.locator('input[name="damageType"][value="sharp-edge"]').check();
+    await expect(page.locator('input[name="damageType"]:checked')).toHaveCount(2);
     await page.locator('input[name="operationalStatus"][value="out-of-service"]').check();
     await page.locator("#equipmentDescription").fill("A bench is broken and unavailable.");
     await page.getByRole("button", { name: "Submit equipment report" }).click();
 
     await expect(page.locator("[data-request-message]")).toContainText("TCK-D-2026-1026");
     await expect(page.locator("#equipmentLocation")).toHaveValue("");
+});
+
+test("[E2E-07] maintenance accepts multiple checkbox choices and enforces a single radio choice", async ({ page }) => {
+    await page.route("**/api/requests", async (route) => {
+        const request = route.request().postDataJSON();
+        expect(request).toMatchObject({
+            requestType: "maintenance",
+            details: {
+                maintenanceType: "Pothole / Road Degradation",
+                severity: "traffic-blocked",
+                utilityInvolvement: ["gushing-water", "exposed-line"],
+                estimatedSize: "Moderate 1–5m²"
+            }
+        });
+        await route.fulfill({
+            status: 201,
+            contentType: "application/json",
+            body: JSON.stringify({
+                success: true,
+                ticket: { tracking_ref: "TCK-M-2026-1001" }
+            })
+        });
+    });
+
+    await page.goto("/src/pages/services.html");
+    await page.locator('.service-card-btn[href="maintenance_request.html"]').click();
+    await page.locator('input[name="maintenanceType"][value="Pothole / Road Degradation"]').check();
+    await page.locator("#maintenanceLocation").fill("Civic Park entrance");
+    await page.locator('input[name="severity"][value="isolated"]').check();
+    await page.locator('input[name="severity"][value="traffic-blocked"]').check();
+    await expect(page.locator('input[name="severity"][value="isolated"]')).not.toBeChecked();
+    await page.locator('input[name="utilityInvolvement"][value="gushing-water"]').check();
+    await page.locator('input[name="utilityInvolvement"][value="exposed-line"]').check();
+    await expect(page.locator('input[name="utilityInvolvement"]:checked')).toHaveCount(2);
+    await page.locator('input[name="estimatedSize"][value="Moderate 1–5m²"]').check();
+    await page.locator("#maintenanceDescription").fill("Water is running across the roadway.");
+    await page.getByRole("button", { name: "Submit maintenance report" }).click();
+
+    await expect(page.locator("[data-request-message]")).toContainText("TCK-M-2026-1001");
 });
 
 test("[E2E-03] requester can edit a submitted ticket and receives an audit confirmation", async ({ page }) => {
@@ -155,7 +196,8 @@ test("[E2E-03] requester can edit a submitted ticket and receives an audit confi
         expect(route.request().method()).toBe("PUT");
         const request = route.request().postDataJSON();
         expect(request.details).toMatchObject({
-            damageType: ["broken-vandalized"],
+            assetId: "",
+            damageType: ["broken-vandalized", "sharp-edge"],
             description: "A bench has a corrected description."
         });
         await route.fulfill({
@@ -170,11 +212,11 @@ test("[E2E-03] requester can edit a submitted ticket and receives an audit confi
                     updated_at: "2026-10-14T11:00:00.000Z",
                     details: {
                         equipmentType: "Park Bench / Table",
-                        assetId: "BENCH-22",
+                        assetId: "",
                         location: "Civic Park",
                         locationLatitude: 12.5,
                         locationLongitude: -45.25,
-                        damageType: ["broken-vandalized"],
+                        damageType: ["broken-vandalized", "sharp-edge"],
                         operationalStatus: "out-of-service",
                         description: "A bench has a corrected description."
                     }
@@ -191,6 +233,12 @@ test("[E2E-03] requester can edit a submitted ticket and receives an audit confi
         .toContainText("You can still edit its details");
     await page.locator("#editRequestDetails").click();
     await expect(page.locator('#requestEditFields [name="location"]')).toHaveCount(0);
+    await expect(page.locator('#requestEditFields [name="equipmentType"]')).toHaveAttribute("required", "");
+    await expect(page.locator('#requestEditFields [name="assetId"]')).not.toHaveAttribute("required", "");
+    await expect(page.locator("#requestEditFields")).toContainText("Asset ID (optional)");
+    await page.locator('#requestEditFields [name="assetId"]').fill("");
+    await page.locator('#requestEditFields input[name="damageType"][value="sharp-edge"]').check();
+    await expect(page.locator('#requestEditFields input[name="damageType"]:checked')).toHaveCount(2);
     await page.locator('#requestEditFields textarea[name="description"]').fill(
         "A bench has a corrected description."
     );

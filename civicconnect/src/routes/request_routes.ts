@@ -350,21 +350,24 @@ function parseFields(
             }
             parsed[name] = coordinate;
         } else if (rule.kind === "text-list") {
-            if (input === undefined) {
-                parsed[name] = "";
-                continue;
-            }
-            const selections = Array.isArray(input) ? input : [input];
+            const selections: unknown[] = input === undefined || input === null || input === ""
+                ? []
+                : Array.isArray(input)
+                    ? input
+                    : typeof input === "string"
+                        ? input.split(/;\s*/)
+                        : [input];
+            const validSelections = selections.filter((selection): selection is string =>
+                typeof selection === "string" &&
+                rule.values.some((allowed) => allowed === selection)
+            );
             if (
-                (rule.required && selections.length === 0) ||
-                selections.some((selection) =>
-                    typeof selection !== "string" ||
-                    !rule.values.some((allowed) => allowed === selection)
-                )
+                (rule.required && validSelections.length === 0) ||
+                validSelections.length !== selections.length
             ) {
                 return null;
             }
-            parsed[name] = (selections as string[]).join("; ");
+            parsed[name] = validSelections.join("; ");
         } else {
             if (input === undefined && !rule.required) {
                 parsed[name] = "";

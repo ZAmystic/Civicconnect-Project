@@ -180,18 +180,17 @@
                 <p class="card-text">Tell us what is damaged and where staff can find it.</p>
               </div>
               <div class="form-grid">
-                <div class="form-group">
-                  <label for="equipmentType">Equipment type <span aria-hidden="true">*</span></label>
-                  <select id="equipmentType" name="equipmentType" required>
-                    <option value="">Select equipment type</option>
-                    <option>Playground Structure</option>
-                    <option>Public Gym Unit</option>
-                    <option>Park Bench / Table</option>
-                    <option>Trash Receptacle</option>
-                    <option>Electrical Substation Box</option>
-                    <option>Traffic Control Box</option>
-                  </select>
-                </div>
+                <fieldset class="choice-fieldset form-group-wide">
+                  <legend class="choice-legend">Equipment type <span aria-hidden="true">*</span></legend>
+                  <div class="urgency-grid compact-radio-grid">
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Playground Structure" required><span class="urgency-copy"><span class="urgency-heading"><strong>Playground Structure</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Public Gym Unit" required><span class="urgency-copy"><span class="urgency-heading"><strong>Public Gym Unit</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Park Bench / Table" required><span class="urgency-copy"><span class="urgency-heading"><strong>Park Bench / Table</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Trash Receptacle" required><span class="urgency-copy"><span class="urgency-heading"><strong>Trash Receptacle</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Electrical Substation Box" required><span class="urgency-copy"><span class="urgency-heading"><strong>Electrical Substation Box</strong></span></span></label>
+                    <label class="urgency-option compact-radio-option"><input name="equipmentType" type="radio" value="Traffic Control Box" required><span class="urgency-copy"><span class="urgency-heading"><strong>Traffic Control Box</strong></span></span></label>
+                  </div>
+                </fieldset>
                 <div class="form-group">
                   <label for="assetId">Asset ID / serial number <span class="field-optional">(optional)</span></label>
                   <input id="assetId" name="assetId" type="text" maxlength="80" placeholder="e.g. PG-WARD4-002">
@@ -218,11 +217,11 @@
               <fieldset class="choice-fieldset" data-check-at-least-one>
                 <legend class="choice-legend">Type of damage <span aria-hidden="true">*</span></legend>
                 <div class="checkbox-grid">
-                  <label class="checkbox-option"><input name="damageType" type="checkbox" value="broken-vandalized" required><span>Broken / Vandalized</span></label>
-                  <label class="checkbox-option"><input name="damageType" type="checkbox" value="missing-components"><span>Missing Components</span></label>
-                  <label class="checkbox-option"><input name="damageType" type="checkbox" value="sharp-edge"><span>Sharp Metal / Exposed Edge</span></label>
-                  <label class="checkbox-option"><input name="damageType" type="checkbox" value="unstable-base"><span>Unstable Base</span></label>
-                  <label class="checkbox-option"><input name="damageType" type="checkbox" value="exposed-wires"><span>Electrical / Exposed Wires</span></label>
+                  <label class="checkbox-option"><input name="damageType" type="checkbox" data-multi-select value="broken-vandalized"><span>Broken / Vandalized</span></label>
+                  <label class="checkbox-option"><input name="damageType" type="checkbox" data-multi-select value="missing-components"><span>Missing Components</span></label>
+                  <label class="checkbox-option"><input name="damageType" type="checkbox" data-multi-select value="sharp-edge"><span>Sharp Metal / Exposed Edge</span></label>
+                  <label class="checkbox-option"><input name="damageType" type="checkbox" data-multi-select value="unstable-base"><span>Unstable Base</span></label>
+                  <label class="checkbox-option"><input name="damageType" type="checkbox" data-multi-select value="exposed-wires"><span>Electrical / Exposed Wires</span></label>
                 </div>
                 <span class="field-help">Choose at least one damage type.</span>
               </fieldset>

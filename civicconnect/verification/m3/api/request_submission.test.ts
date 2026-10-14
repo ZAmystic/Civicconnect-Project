@@ -66,8 +66,8 @@ describe("service request API and persistence integration", () => {
             body: JSON.stringify({
                 details: {
                     equipmentType: "Park Bench / Table",
-                    assetId: "BENCH-22",
-                    damageType: ["broken-vandalized"],
+                    assetId: "",
+                    damageType: ["broken-vandalized", "sharp-edge"],
                     operationalStatus: "out-of-service",
                     description: "A damaged bench with a corrected description."
                 }
@@ -87,12 +87,19 @@ describe("service request API and persistence integration", () => {
         expect(harness.calls.some(({ sql }) =>
             sql.includes('UPDATE "DamagedEquipmentDetails"')
         )).toBe(true);
+        const detailsUpdate = harness.calls.find(({ sql }) =>
+            sql.includes('UPDATE "DamagedEquipmentDetails"')
+        );
+        expect(detailsUpdate?.params?.[2]).toBe("");
+        expect(detailsUpdate?.params?.[6]).toBe("broken-vandalized; sharp-edge");
         const editAudit = harness.calls.find(({ sql }) =>
             sql.includes('INSERT INTO "TicketEditAudit"')
         );
         expect(editAudit?.params?.[2]).toContain('"description":"A damaged bench."');
         expect(editAudit?.params?.[3]).toContain('"description":"A damaged bench with a corrected description."');
         expect(editAudit?.params?.[4]).toContain('"description"');
+        expect(editAudit?.params?.[4]).toContain('"assetId"');
+        expect(editAudit?.params?.[4]).toContain('"damageType"');
         const visibleAudit = harness.calls.find(({ sql }) =>
             sql.includes('INSERT INTO "AuditLog"')
         );
@@ -268,6 +275,41 @@ describe("service request API and persistence integration", () => {
         ]);
         expect(harness.calls.at(-1)?.sql).toBe("COMMIT");
         expect(harness.release).toHaveBeenCalledOnce();
+    });
+
+    it("stores multiple maintenance utility selections", async () => {
+        const response = await fetch(`${harness.baseUrl}/api/requests`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                requestType: "maintenance",
+                details: {
+                    maintenanceType: "Pothole / Road Degradation",
+                    location: "Civic Park entrance",
+                    severity: "traffic-blocked",
+                    utilityInvolvement: ["gushing-water", "exposed-line"],
+                    estimatedSize: "Moderate 1–5m²",
+                    description: "Water is running across the roadway."
+                }
+            })
+        });
+
+        expect(response.status).toBe(201);
+        const detailInsert = harness.calls.find(({ sql }) =>
+            sql.includes('INSERT INTO "MaintenanceDetails"')
+        );
+        expect(detailInsert?.params).toEqual([
+            "test-ticket-7",
+            "Pothole / Road Degradation",
+            "Civic Park entrance",
+            null,
+            null,
+            "traffic-blocked",
+            "gushing-water; exposed-line",
+            "Moderate 1–5m²",
+            "Water is running across the roadway."
+        ]);
+        expect(harness.calls.at(-1)?.sql).toBe("COMMIT");
     });
 
     it("[API-02] maps a general-request topic and details into ticket and typed-detail records", async () => {
