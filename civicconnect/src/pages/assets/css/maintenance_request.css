@@ -1020,6 +1020,12 @@ input {
   gap: 10px;
 }
 
+.compact-radio-option {
+  min-height: 76px;
+  align-items: center;
+  padding: 12px;
+}
+
 .urgency-option {
   position: relative;
   display: flex;

@@ -327,6 +327,19 @@ function formatOptionLabel(value: string): string {
         .replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
+function appendEditRequirement(container: HTMLElement, field: EditableField): void {
+    const requirement = document.createElement("span");
+    if (field.required) {
+        requirement.className = "request-edit-required";
+        requirement.setAttribute("aria-label", "required");
+        requirement.textContent = " *";
+    } else {
+        requirement.className = "request-edit-optional";
+        requirement.textContent = " (optional)";
+    }
+    container.append(requirement);
+}
+
 function createEditControl(field: EditableField, value: unknown): HTMLElement {
     const labelText = formatDetailLabel(field.name);
     if (field.kind === "text-list") {
@@ -334,6 +347,7 @@ function createEditControl(field: EditableField, value: unknown): HTMLElement {
         group.className = "request-edit-field request-edit-checkbox-group";
         const legend = document.createElement("legend");
         legend.textContent = labelText;
+        appendEditRequirement(legend, field);
         group.append(legend);
         const selectedValues = Array.isArray(value)
             ? value.map(String)
@@ -358,6 +372,7 @@ function createEditControl(field: EditableField, value: unknown): HTMLElement {
     label.className = "request-edit-field";
     const caption = document.createElement("span");
     caption.textContent = labelText;
+    appendEditRequirement(caption, field);
     label.append(caption);
 
     if (field.kind === "boolean") {
