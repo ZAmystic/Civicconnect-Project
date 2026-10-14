@@ -90,7 +90,8 @@ function renderLogs(logs: AuditLog[]): void {
 
         const statusCell = document.createElement("td");
         const status = document.createElement("span");
-        status.className = "audit-log-status";
+        const statusClass = log.new_status.toLowerCase().replaceAll("_", "-");
+        status.className = `audit-log-status audit-log-status-${statusClass}`;
         status.textContent = log.previous_status === log.new_status
             ? `${formatStatus(log.new_status)} · details updated`
             : `${formatStatus(log.previous_status)} to ${formatStatus(log.new_status)}`;
