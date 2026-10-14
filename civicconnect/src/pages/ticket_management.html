@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg"/>
+  <title>CivicConnect Ticket Management</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/dashboard.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/ticket_management.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/scrollbar.css"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg"/>
+          <span class="logo-title">CivicConnect</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section"><span class="nav-section-title">Dashboards</span></div>
+        <a class="nav-item" id="requesterNav" href="dashboard.html">
+          <span class="material-symbols-outlined" aria-hidden="true">person</span><span>Requester</span>
+        </a>
+        <a class="nav-item" id="createTicketNav" href="services.html">
+          <span class="material-symbols-outlined" aria-hidden="true">add_circle</span><span>Create Ticket</span>
+        </a>
+        <div class="nav-section"><span class="nav-section-title">Service Requests</span></div>
+        <div class="nav-section"><span class="nav-section-title">Operations</span></div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined" aria-hidden="true">timer</span><span>Workflow &amp; SLA</span>
+        </a>
+        <div class="nav-section"><span class="nav-section-title">Intelligence</span></div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined" aria-hidden="true">insights</span><span>Reports &amp; Analytics</span>
+        </a>
+        <div class="nav-section"><span class="nav-section-title">Administration</span></div>
+        <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">groups</span><span>User Management</span>
+        </a>
+        <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">settings</span><span>Settings</span>
+        </a>
+      </nav>
+    </div>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span><span class="status-text">System Version</span>
+        </div>
+        <span class="version-text">v0.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon" aria-hidden="true">search</span>
+        <input class="search-input" placeholder="Search tickets, reference, or citizens..." type="text" id="headerTicketSearchInput" aria-label="Search tickets"/>
+      </div>
+      <div class="header-actions">
+        <a class="btn-primary" href="services.html">
+          <span class="material-symbols-outlined" aria-hidden="true">add</span><span>New Request</span>
+        </a>
+        <div class="vertical-divider"></div>
+        <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+          <span class="avatar-container">
+            <img alt="Profile" class="avatar-img" src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ad1189f&is=6acfc71f&hm=94b519c1863c78e8c7ce77b9092ef8552b444a8699d5378897a534d8ee081471&"/>
+            <span class="avatar-status"></span>
+          </span>
+          <span class="profile-info">
+            <span class="profile-name">Loading...</span><span class="profile-role"></span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard-content">
+      <section class="ticket-admin-panel" id="ticketAdminPanel" aria-labelledby="ticketAdminTitle" hidden>
+        <div class="ticket-admin-header">
+          <div>
+            <p class="ticket-admin-eyebrow">Operations</p>
+            <h1 id="ticketAdminTitle">Ticket Management</h1>
+            <p class="ticket-admin-description">Review submitted requests, update ticket statuses, and assign contractors.</p>
+          </div>
+          <button class="ticket-admin-refresh" id="ticketRefreshButton" type="button">
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>Refresh
+          </button>
+        </div>
+        <div class="ticket-admin-toolbar">
+          <label class="ticket-search-label" for="ticketSearchInput">Search tickets</label>
+          <input id="ticketSearchInput" type="search" maxlength="100" placeholder="Reference, requester, category, or description">
+          <label class="ticket-status-label" for="ticketStatusFilter">Status</label>
+          <select id="ticketStatusFilter">
+            <option value="">All statuses</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Assigned">Assigned</option>
+            <option value="In_Progress">In progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <p class="ticket-admin-message" id="ticketAdminMessage" role="status" aria-live="polite"></p>
+        <div class="ticket-table-wrap">
+          <table class="ticket-table">
+            <thead>
+              <tr>
+                <th scope="col">Ticket</th><th scope="col">Requester</th><th scope="col">Category</th>
+                <th scope="col">Description</th><th scope="col">Status</th><th scope="col">Contractor</th>
+                <th scope="col">Submitted</th>
+              </tr>
+            </thead>
+            <tbody id="ticketTableBody"></tbody>
+          </table>
+        </div>
+        <div class="ticket-pagination">
+          <span id="ticketPaginationSummary">No tickets</span>
+          <div>
+            <button id="ticketPreviousPage" type="button" disabled>Previous</button>
+            <button id="ticketNextPage" type="button" disabled>Next</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="user-dialog ticket-details-dialog" id="ticketDetailsDialog" aria-labelledby="ticketDialogTitle">
+    <form id="ticketStatusForm">
+      <div class="user-dialog-header">
+        <div><p class="user-dialog-eyebrow">Ticket details</p><h2 id="ticketDialogTitle">Update ticket status</h2></div>
+        <button class="user-dialog-close" id="closeTicketDialog" type="button" aria-label="Close ticket details">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <p class="ticket-dialog-reference" id="selectedTicketReference"></p>
+      <dl class="ticket-dialog-summary">
+        <div><dt>Requester</dt><dd id="selectedTicketRequester"></dd></div>
+        <div><dt>Category</dt><dd id="selectedTicketCategory"></dd></div>
+        <div><dt>Current status</dt><dd id="selectedTicketCurrentStatus"></dd></div>
+        <div><dt>Submitted</dt><dd id="selectedTicketCreatedAt"></dd></div>
+        <div><dt>Contractor</dt><dd id="selectedTicketContractor"></dd></div>
+        <div class="ticket-dialog-description"><dt>Description</dt><dd id="selectedTicketDescription"></dd></div>
+      </dl>
+      <div class="ticket-dialog-fields">
+        <label>
+          New status
+          <select id="ticketEditStatus" name="status" required>
+            <option value="Submitted">Submitted</option>
+            <option value="Assigned">Assigned</option>
+            <option value="In_Progress">In progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </label>
+        <label>
+          Reason for status change
+          <textarea id="ticketStatusReason" name="reason" maxlength="255" rows="3"></textarea>
+        </label>
+        <label>
+          Assign or change contractor
+          <select id="ticketContractorSelect" name="contractorId">
+            <option value="">Keep current contractor</option>
+          </select>
+          <span class="ticket-assignment-help" id="ticketAssignmentHelp">Choose a contractor to assign or reassign this ticket. Leave unchanged to keep the current assignment.</span>
+        </label>
+      </div>
+      <p class="user-dialog-message" id="ticketDialogMessage" role="status" aria-live="polite"></p>
+    </form>
+    <div class="user-dialog-actions ticket-details-actions">
+      <button class="user-dialog-cancel" id="cancelTicketDialog" type="button">Close</button>
+      <button class="user-dialog-save" id="saveTicketStatus" type="submit" form="ticketStatusForm">Save status</button>
+    </div>
+  </dialog>
+
+  <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+    <form id="accountSettingsForm">
+      <div class="user-dialog-header">
+        <div><p class="user-dialog-eyebrow">My account</p><h2 id="accountSettingsTitle">Account settings</h2></div>
+        <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="user-dialog-fields account-dialog-fields">
+        <label>First name<input id="accountFullName" name="full_name" type="text" maxlength="100" autocomplete="given-name" required></label>
+        <label>Surname<input id="accountSurname" name="full_surname" type="text" maxlength="100" autocomplete="family-name"></label>
+        <label class="user-dialog-wide">Email<input id="accountEmail" name="email" type="email" maxlength="150" autocomplete="email" required></label>
+      </div>
+      <div class="account-password-section">
+        <h3>Change password</h3>
+        <p>Leave these fields blank to keep your current password. New passwords must meet the configured strength requirement.</p>
+        <div class="user-dialog-fields account-dialog-fields">
+          <label class="user-dialog-wide">Current password<input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password"></label>
+          <label>New password<input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password"></label>
+          <label>Confirm new password<input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password"></label>
+        </div>
+      </div>
+      <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+      <div class="user-dialog-actions">
+        <button class="user-dialog-signout" id="accountSignOut" type="button"><span class="material-symbols-outlined" aria-hidden="true">logout</span>Sign out</button>
+        <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+        <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module">
+    import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    import { initializeTicketAdmin } from "/src/events/dashboard/ticket_admin.ts";
+    void initializeUserNavigation();
+    void initializeTicketAdmin();
+  </script>
+</body>
+</html>
