@@ -15,6 +15,50 @@ beforeEach(() => {
 });
 
 describe("service request API and persistence integration", () => {
+    it("returns requester dashboard metrics only for the signed-in user's tickets", async () => {
+        const response = await fetch(`${harness.baseUrl}/api/requests/mine`);
+        const body = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(body).toMatchObject({
+            success: true,
+            dashboard: {
+                total_tickets: 3,
+                active_tickets: 1,
+                completed_tickets: 1,
+                rejected_tickets: 1,
+                recent_tickets: 2,
+                tickets: []
+            }
+        });
+        const ticketQuery = harness.calls.find(({ sql }) =>
+            sql.includes("WITH scoped_tickets AS")
+        );
+        expect(ticketQuery?.sql).toContain("ticket.citizen_id = $1");
+        expect(ticketQuery?.params).toEqual([42]);
+        expect(ticketQuery?.sql).not.toMatch(/\bLIMIT\s+8\b/i);
+        for (const detailTable of [
+            "DamagedEquipmentDetails",
+            "SecurityConcernDetails",
+            "ITSupportDetails",
+            "MaintenanceDetails",
+            "LostPropertyDetails",
+            "GeneralRequestDetails",
+            "FacilityFaultDetails"
+        ]) {
+            expect(ticketQuery?.sql).toContain(`LEFT JOIN "${detailTable}"`);
+        }
+    });
+
+    it("does not return requester data without an authenticated session", async () => {
+        harness = resetRequestApiHarness({ sessionUserId: null });
+
+        const response = await fetch(`${harness.baseUrl}/api/requests/mine`);
+
+        expect(response.status).toBe(401);
+        expect(harness.calls).toHaveLength(0);
+    });
+
     it("[API-01] commits a damaged-equipment request into its typed table and returns its tracking reference", async () => {
         const response = await fetch(`${harness.baseUrl}/api/requests`, {
             method: "POST",

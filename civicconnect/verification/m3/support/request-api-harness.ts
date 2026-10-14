@@ -2,7 +2,8 @@ import { vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
     getSessionUserId: vi.fn(),
-    connect: vi.fn()
+    connect: vi.fn(),
+    query: vi.fn()
 }));
 
 vi.mock("../../../src/auth/user_session", () => ({
@@ -10,7 +11,7 @@ vi.mock("../../../src/auth/user_session", () => ({
 }));
 
 vi.mock("../../../src/config/database", () => ({
-    dbPool: { connect: mocks.connect }
+    dbPool: { connect: mocks.connect, query: mocks.query }
 }));
 
 const { default: requestRoutes } = await import("../../../src/routes/request_routes");
@@ -69,6 +70,28 @@ export function resetRequestApiHarness(options: HarnessOptions = {}): RequestApi
     const lastTrackingNumber = options.lastTrackingNumber ?? "1025";
 
     mocks.getSessionUserId.mockReturnValue(userId);
+    mocks.query.mockImplementation(async (sql: string, params: unknown[] = []) => {
+        const normalizedSql = sql.replace(/\s+/g, " ").trim();
+        calls.push({ sql: normalizedSql, params });
+        if (normalizedSql.includes('SELECT account_status FROM "User"')) {
+            return { rows: [{ account_status: status }] };
+        }
+        if (normalizedSql.includes("WITH scoped_tickets AS")) {
+            return {
+                rows: [{
+                    total_tickets: 3,
+                    active_tickets: 1,
+                    completed_tickets: 1,
+                    rejected_tickets: 1,
+                    recent_tickets: 2,
+                    last_activity_at: "2026-10-14T10:00:00.000Z",
+                    tickets: []
+                }]
+            };
+        }
+        return { rows: [] };
+    });
+
     const client = {
         query: vi.fn(async (sql: string, params: unknown[] = []) => {
             const normalizedSql = sql.replace(/\s+/g, " ").trim();

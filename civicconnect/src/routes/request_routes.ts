@@ -21,6 +21,25 @@ interface UserStatusRow {
     account_status: boolean | string;
 }
 
+interface DashboardMetricsRow {
+    total_tickets: number;
+    active_tickets: number;
+    completed_tickets: number;
+    rejected_tickets: number;
+    recent_tickets: number;
+    last_activity_at: string | null;
+    tickets: Array<{
+        ticket_id: string;
+        tracking_ref: string;
+        category_name: string;
+        description: string;
+        status: string;
+        created_at: string;
+        updated_at: string;
+        details: Record<string, unknown> | null;
+    }>;
+}
+
 type ParsedFields = Record<string, string | number | boolean | null>;
 
 const requestTypes: Record<string, RequestTypeConfig> = {
@@ -465,6 +484,110 @@ async function saveRequestDetails(
 }
 
 const router = Router();
+
+router.get("/mine", async (req: Request, res: Response) => {
+    const userId = getSessionUserId(req);
+    if (userId === null) {
+        return res.status(401).json({
+            success: false,
+            message: "Sign in to view your service requests."
+        });
+    }
+
+    try {
+        const userResult = await dbPool.query<UserStatusRow>(
+            'SELECT account_status FROM "User" WHERE user_id = $1',
+            [userId]
+        );
+        const user = userResult.rows[0];
+        if (!user || !isActiveAccount(user.account_status)) {
+            return res.status(401).json({
+                success: false,
+                message: "Your account is unavailable. Sign in again."
+            });
+        }
+
+        const result = await dbPool.query<DashboardMetricsRow>(
+            `
+            WITH scoped_tickets AS (
+                SELECT
+                    ticket.ticket_id::text AS ticket_id,
+                    ticket.tracking_ref,
+                    category.category_name,
+                    ticket.description,
+                    ticket.status,
+                    ticket.created_at,
+                    ticket.updated_at,
+                    COALESCE(
+                        to_jsonb(damaged_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(security_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(it_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(maintenance_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(lost_property_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(general_details) - 'ticket_id' - 'created_at',
+                        to_jsonb(facility_fault_details) - 'ticket_id' - 'created_at'
+                    ) AS details
+                FROM "Ticket" AS ticket
+                JOIN "ServiceCategory" AS category USING (category_id)
+                LEFT JOIN "DamagedEquipmentDetails" AS damaged_details
+                    ON damaged_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "SecurityConcernDetails" AS security_details
+                    ON security_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "ITSupportDetails" AS it_details
+                    ON it_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "MaintenanceDetails" AS maintenance_details
+                    ON maintenance_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "LostPropertyDetails" AS lost_property_details
+                    ON lost_property_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "GeneralRequestDetails" AS general_details
+                    ON general_details.ticket_id = ticket.ticket_id
+                LEFT JOIN "FacilityFaultDetails" AS facility_fault_details
+                    ON facility_fault_details.ticket_id = ticket.ticket_id
+                WHERE ticket.citizen_id = $1
+            ), metrics AS (
+                SELECT
+                    COUNT(*)::int AS total_tickets,
+                    COUNT(*) FILTER (
+                        WHERE status IN ('Submitted', 'Assigned', 'In_Progress')
+                    )::int AS active_tickets,
+                    COUNT(*) FILTER (
+                        WHERE status IN ('Resolved', 'Closed')
+                    )::int AS completed_tickets,
+                    COUNT(*) FILTER (WHERE status = 'Rejected')::int AS rejected_tickets,
+                    COUNT(*) FILTER (
+                        WHERE created_at >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+                    )::int AS recent_tickets,
+                    MAX(updated_at) AS last_activity_at
+                FROM scoped_tickets
+            ), history AS (
+                SELECT COALESCE(
+                    json_agg(to_jsonb(history_rows) ORDER BY history_rows.created_at DESC),
+                    '[]'::json
+                ) AS tickets
+                FROM (
+                    SELECT *
+                    FROM scoped_tickets
+                    ORDER BY created_at DESC
+                ) AS history_rows
+            )
+            SELECT metrics.*, history.tickets
+            FROM metrics CROSS JOIN history
+            `,
+            [userId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            dashboard: result.rows[0]
+        });
+    } catch (error) {
+        console.error("Requester dashboard lookup failed:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Your service requests could not be loaded. Please try again."
+        });
+    }
+});
 
 router.post("/", async (req: Request, res: Response) => {
     const userId = getSessionUserId(req);
