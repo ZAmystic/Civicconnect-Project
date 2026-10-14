@@ -61,8 +61,17 @@ jobs:
           grep -Eq 'assets/[^"]+\.js' dist/src/pages/login.html \
             || { echo "::error::login.html has no JS bundle (blank-page build)"; exit 1; }
 
-      - name: Unit tests (Vitest)
-        run: npm test
+      - name: Unit, black-box, and API verification (Vitest)
+        run: npm test -- --reporter=junit --outputFile=verification/m3/evidence/vitest-junit.xml
+
+      - name: Install Chromium for browser system tests
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser system tests (Playwright)
+        run: npm run test:e2e
+
+      - name: Request submission performance scenario
+        run: npm run test:performance
 
       - name: Dependency vulnerability audit
         run: npm audit --audit-level=high
@@ -73,6 +82,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Only needed if the repo belongs to a GitHub organization:
           # GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+      - name: Upload M3 test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m3-test-evidence
+          path: civicconnect/verification/m3/evidence/
+          if-no-files-found: ignore
 
   # ---------------------------------------------------------------
   # Job 2: smoke test against the REAL (test) Supabase/Postgres

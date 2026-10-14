@@ -1,0 +1,429 @@
+<!-- Base layout and sidebar integrated from dashboard.txt[cite: 2] -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <title>CivicConnect Dashboard - Facility Faults</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="/src/pages/assets/css/facility_faults.css" />
+  <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css" />
+  <link rel="stylesheet" href="/src/pages/assets/css/scrollbar.css" />
+</head>
+<body>
+
+  <!-- Sidebar-->
+   <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg"/>
+          <span class="logo-title">CivicConnect</span>
+          <!-- <div class="brand-icon-box">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="stroke-width:2.2">
+              <circle cx="12" cy="12" r="9">              </circle>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>  
+          </div>
+          <span class="logo-title">CivicConnect</span> -->
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <span class="nav-section-title">Dashboards</span>
+        </div>
+        <a class="nav-item" id="requesterNav" href="dashboard.html">
+          <span class="material-symbols-outlined">person</span>
+          <span>Requester</span>
+        </a>
+        <a class="nav-item" id="createTicketNav" href="services.html">
+          <span class="material-symbols-outlined">add_circle</span>
+          <span>Create Ticket</span>
+        </a>
+        <!-- <a class="nav-item active" href="#">
+          <span class="material-symbols-outlined">inbox</span>
+          <span>Staff Queue</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">analytics</span>
+          <span>Admin Executive</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Service Requests</span>
+        </div>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">folder_open</span>
+          <span>All Requests</span>
+        </a> -->
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">fact_check</span>
+          <span>My Approvals</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Operations</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">timer</span>
+          <span>Workflow & SLA</span>
+        </a>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span>Departments</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Intelligence</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">insights</span>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Administration</span>
+        </div>
+        <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
+          <span class="material-symbols-outlined">groups</span>
+          <span>User Management</span>
+        </a>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">history</span>
+          <span>Audit Logs</span>
+        </a> -->
+        <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">System Version</span>
+        </div>
+        <span class="version-text">v0.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input class="search-input" placeholder="Search requests, ticket #, or citizens..." type="text"/>
+      </div>
+      
+      <div class="header-actions">
+        <a class="btn-primary" href="services.html">
+          <span class="material-symbols-outlined">add</span>
+          <span>New Request</span>
+        </a>
+        <div class="vertical-divider"></div>
+        
+        <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+          <span class="avatar-container">
+            <img alt="Profile" class="avatar-img" src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ad1189f&is=6acfc71f&hm=94b519c1863c78e8c7ce77b9092ef8552b444a8699d5378897a534d8ee081471&"/>
+            <span class="avatar-status"></span>
+          </span>
+          <span class="profile-info">
+            <span class="profile-name">Loading...</span>
+            <span class="profile-role"></span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-content">
+      <div class="content-wrapper">
+        <div class="header-nav">
+          <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="dashboard.html">Dashboard</a>
+            <span class="material-symbols-outlined breadcrumb-icon" aria-hidden="true">chevron_right</span>
+            <a href="services.html">Service Requests</a>
+            <span class="material-symbols-outlined breadcrumb-icon" aria-hidden="true">chevron_right</span>
+            <span class="active">Facility Faults</span>
+          </nav>
+        </div>
+        <div class="hero-card">
+          <div class="hero-content">
+            <div class="hero-tags">
+              <span class="tag-primary">Public Works &amp; Facilities</span>
+              <span class="tag-sla">Target SLA: 4–12 Hours Response</span>
+              <span class="tag-tier">Tier-2 Engineering Dispatch</span>
+            </div>
+            <h1 class="page-title">Report Facility Fault or Structural Issue</h1>
+            <p class="page-desc">Log structural damage, major water breaches, HVAC outages, or safety hazards within municipal real estate. Dispatches automated field inspection squads to city properties.</p>
+          </div>
+          <div class="hero-metrics">
+            <div class="metrics-text">
+              <span class="metrics-label">Squad On Duty</span>
+              <span class="metrics-value">Unit 4B</span>
+            </div>
+            <div class="metrics-icon">
+              <span class="material-symbols-outlined">engineering</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-layout">
+          <form class="form-column facility-fault-form" id="facilityFaultForm">
+            <section class="card">
+              <div class="card-header">
+                <h2 class="card-title">1. Facility location</h2>
+                <p class="card-text">Enter the address manually, or search for it and place a pin on the map.</p>
+              </div>
+              <div class="form-group">
+                <label for="facilityAddress">Facility address <span aria-hidden="true">*</span></label>
+                <div class="maps-search-control">
+                  <input id="facilityAddress" name="facilityAddress" type="text" autocomplete="street-address" maxlength="300" placeholder="Enter a facility name or address" required>
+                  <button class="maps-search-button" id="openFacilityMap" type="button" aria-haspopup="dialog" aria-controls="facilityLocationDialog">
+                    <span class="material-symbols-outlined" aria-hidden="true">map</span>
+                    <span>Choose on map</span>
+                  </button>
+                  <button class="clear-location-button" id="clearFacilityLocation" type="button" aria-label="Clear selected facility location" hidden>
+                    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+                    <span>Clear</span>
+                  </button>
+                </div>
+                <input id="facilityLatitude" name="facilityLatitude" type="hidden">
+                <input id="facilityLongitude" name="facilityLongitude" type="hidden">
+                <span class="field-help">Type an address here, or use the map to search and place a pin.</span>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h2 class="card-title">2. Fault classification</h2>
+                <p class="card-text">Choose the option that best describes the facility issue.</p>
+              </div>
+              <fieldset class="choice-fieldset">
+                <legend class="visually-hidden">Fault classification</legend>
+                <div class="category-grid">
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="plumbing" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">water_damage</span>
+                    <span class="category-copy"><strong>Plumbing Burst/Leak</strong><span>Pipes, backflow, sanitary fixtures</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="hvac" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">mode_fan</span>
+                    <span class="category-copy"><strong>HVAC / Climate Failure</strong><span>Chillers, air handlers, heating or cooling</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="elevator" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">elevator</span>
+                    <span class="category-copy"><strong>Elevator / Hoistway</strong><span>Elevator outage or hoistway issue</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="structural" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">foundation</span>
+                    <span class="category-copy"><strong>Structural Crack / Wall</strong><span>Wall, foundation, or structural damage</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="roof" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">roofing</span>
+                    <span class="category-copy"><strong>Roof Leak / Ceiling</strong><span>Roof leaks, ceiling damage, or collapse</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                  <label class="category-item">
+                    <input type="radio" name="faultClassification" value="electrical" required>
+                    <span class="category-icon material-symbols-outlined" aria-hidden="true">bolt</span>
+                    <span class="category-copy"><strong>Electrical Hazard</strong><span>Exposed wiring, sparks, or power hazard</span></span>
+                    <span class="choice-indicator" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h2 class="card-title">3. Hazard urgency</h2>
+                <p class="card-text">Select the level that best reflects the risk and impact.</p>
+              </div>
+              <fieldset class="choice-fieldset">
+                <legend class="visually-hidden">Hazard urgency level</legend>
+                <div class="urgency-grid">
+                  <label class="urgency-option">
+                    <input type="radio" name="urgency" value="routine" required>
+                    <span class="urgency-copy">
+                      <span class="urgency-heading"><strong>Routine / Low</strong><span class="sla-badge">24–48h</span></span>
+                      <span>Cosmetic wear or minor issues with no immediate safety risk.</span>
+                    </span>
+                  </label>
+                  <label class="urgency-option">
+                    <input type="radio" name="urgency" value="moderate" required>
+                    <span class="urgency-copy">
+                      <span class="urgency-heading"><strong>Moderate / Urgent</strong><span class="sla-badge">4–8h SLA</span></span>
+                      <span>Active disruption to staff workflows or public operations.</span>
+                    </span>
+                  </label>
+                  <label class="urgency-option urgency-critical">
+                    <input type="radio" name="urgency" value="critical" required>
+                    <span class="urgency-copy">
+                      <span class="urgency-heading"><strong>Critical / Code Red</strong><span class="sla-badge">&lt;1h SLA</span></span>
+                      <span>Immediate structural failure threat or evacuation required.</span>
+                    </span>
+                  </label>
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h2 class="card-title">4. Incident description</h2>
+                <p class="card-text">Include what happened, where it is in the facility, and any immediate safety concerns.</p>
+              </div>
+              <div class="form-group">
+                <label for="incidentDescription">Describe the issue <span aria-hidden="true">*</span></label>
+                <textarea id="incidentDescription" name="incidentDescription" rows="6" maxlength="3000" placeholder="Describe the fault, when it started, and any impact or hazards..." required></textarea>
+                <span class="field-help">Do not include sensitive personal information.</span>
+              </div>
+            </section>
+
+            <div class="form-submit-row">
+              <p class="form-submit-message" id="facilityFaultMessage" role="status" aria-live="polite"></p>
+              <button class="submit-request-button" type="submit">
+                <span class="material-symbols-outlined" aria-hidden="true">send</span>
+                Submit facility report
+              </button>
+            </div>
+          </form>
+
+          <aside class="sidebar-column">
+            <div class="card dispatch-card">
+              <div class="dispatch-icon material-symbols-outlined" aria-hidden="true">engineering</div>
+              <h2 class="card-title">What happens next?</h2>
+              <p class="card-text">Your report details help the facilities team assess the issue and determine the appropriate response.</p>
+              <ul class="dispatch-steps">
+                <li><span>1</span><span>Review the location and issue details</span></li>
+                <li><span>2</span><span>Assess safety and urgency</span></li>
+                <li><span>3</span><span>Coordinate a facilities response</span></li>
+              </ul>
+              <p class="dispatch-note"><span class="material-symbols-outlined" aria-hidden="true">warning</span> For immediate danger, contact emergency services.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <dialog class="location-picker-dialog" id="facilityLocationDialog" aria-labelledby="facilityLocationTitle">
+    <div class="location-picker-content">
+      <header class="location-picker-header">
+        <div>
+          <p class="location-picker-eyebrow">Facility location</p>
+          <h2 id="facilityLocationTitle">Choose a location</h2>
+        </div>
+        <button class="location-picker-close" id="closeFacilityMap" type="button" aria-label="Close map">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </header>
+      <form class="location-search-form" id="facilityLocationSearchForm" role="search">
+        <label class="visually-hidden" for="facilityLocationSearch">Search for a facility or address</label>
+        <input id="facilityLocationSearch" name="query" type="search" maxlength="200" placeholder="Search for a facility or address" autocomplete="street-address" required>
+        <button class="maps-search-button" id="searchFacilityLocation" type="submit">
+          <span class="material-symbols-outlined" aria-hidden="true">search</span>
+          <span>Search</span>
+        </button>
+      </form>
+      <p class="location-picker-status" id="facilityLocationStatus" role="status" aria-live="polite">Search for a location or click anywhere on the map to place a pin.</p>
+      <ul class="location-search-results" id="facilityLocationResults" aria-label="Location search results" hidden></ul>
+      <div class="facility-location-map" id="facilityMap" role="application" aria-label="Map. Click to place a pin; drag the pin to adjust its position."></div>
+      <div class="location-picker-footer">
+        <div>
+          <p class="location-picker-coordinate-label">Selected coordinates</p>
+          <output class="location-picker-coordinates" id="facilityLocationCoordinates">No pin selected</output>
+        </div>
+        <div class="location-picker-actions">
+          <button class="location-picker-cancel" id="cancelFacilityLocation" type="button">Cancel</button>
+          <button class="maps-search-button" id="confirmFacilityLocation" type="button" disabled>Use this location</button>
+        </div>
+      </div>
+      <p class="location-picker-attribution">Map data &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>. Search by <a href="https://nominatim.openstreetmap.org/" target="_blank" rel="noopener noreferrer">Nominatim</a>.</p>
+    </div>
+  </dialog>
+
+  <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+    <form id="accountSettingsForm">
+      <div class="user-dialog-header">
+        <div>
+          <p class="user-dialog-eyebrow">My account</p>
+          <h2 id="accountSettingsTitle">Account settings</h2>
+        </div>
+        <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="user-dialog-fields account-dialog-fields">
+        <label>
+          First name
+          <input id="accountFullName" name="full_name" type="text" maxlength="100" autocomplete="given-name" required>
+        </label>
+        <label>
+          Surname
+          <input id="accountSurname" name="full_surname" type="text" maxlength="100" autocomplete="family-name">
+        </label>
+        <label class="user-dialog-wide">
+          Email
+          <input id="accountEmail" name="email" type="email" maxlength="150" autocomplete="email" required>
+        </label>
+      </div>
+
+      <div class="account-password-section">
+        <h3>Change password</h3>
+        <p>Leave these fields blank to keep your current password. New passwords must meet the configured strength requirement.</p>
+        <div class="user-dialog-fields account-dialog-fields">
+          <label class="user-dialog-wide">
+            Current password
+            <input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password">
+          </label>
+          <label>
+            New password
+            <input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password">
+          </label>
+          <label>
+            Confirm new password
+            <input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password">
+          </label>
+        </div>
+      </div>
+
+      <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+      <div class="user-dialog-actions">
+        <button class="user-dialog-signout" id="accountSignOut" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+          Sign out
+        </button>
+        <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+        <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+  <script type="module">
+    import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    import { initializeFacilityFaultForm } from "/src/events/facility_faults/facility_faults.ts";
+    void initializeUserNavigation();
+    void initializeFacilityFaultForm();
+  </script>
+</body>
+</html>

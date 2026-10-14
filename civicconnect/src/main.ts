@@ -1,5 +1,9 @@
 import express from "express";
 import userRoutes from "./routes/user_route";
+import settingsRouter from "./routes/settings_route";
+import facilityFaultRoutes from "./routes/facility_fault_routes";
+import requestRoutes from "./routes/request_routes";
+import auditLogRoutes from "./routes/audit_log_routes";
 
 const app = express();
 
@@ -10,6 +14,10 @@ app.use(express.json());
 
 // Register user REST API routes
 app.use("/api/users", userRoutes);
+app.use("/api/settings", settingsRouter);
+app.use("/api/facility-faults", facilityFaultRoutes);
+app.use("/api/requests", requestRoutes);
+app.use("/api/audit-logs", auditLogRoutes);
 
 // Basic API health check
 app.get("/api/health", (_req, res) => {

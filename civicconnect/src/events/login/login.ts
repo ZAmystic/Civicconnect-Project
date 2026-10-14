@@ -2,12 +2,6 @@
 interface LoginResponse {
     success: boolean;
     message: string;
-    user?: {
-        user_id: number;
-        full_name: string;
-        email: string;
-        role: string;
-    };
 }
 
 const loginForm = document.querySelector<HTMLFormElement>(
@@ -65,8 +59,11 @@ loginForm?.addEventListener("submit", async (event) => {
             return;
         }
 
-        console.log("Authenticated user:", data.user);
-
+        try {
+            sessionStorage.removeItem("civicconnect_current_user");
+        } catch (error) {
+            console.warn("Unable to clear cached user details before navigation:", error);
+        }
         // Redirect after successful authentication
         window.location.assign("/src/pages/dashboard.html");
 

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <title>CivicConnect Dashboard - Service Requests</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  
+  <link rel="stylesheet" href="/src/pages/assets/css/services.css" />
+  <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css" />
+  <link rel="stylesheet" href="/src/pages/assets/css/scrollbar.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg"/>
+          <span class="logo-title">CivicConnect</span>
+          <!-- <div class="brand-icon-box">
+            <svg class="svg-icon" viewBox="0 0 24 24" style="stroke-width:2.2">
+              <circle cx="12" cy="12" r="9"></circle>
+              <circle cx="12" cy="12" r="4"></circle>
+            </svg>  
+          </div>
+          <span class="logo-title">CivicConnect</span> -->
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <span class="nav-section-title">Dashboards</span>
+        </div>
+        <a class="nav-item" id="requesterNav" href="dashboard.html">
+          <span class="material-symbols-outlined">person</span>
+          <span>Requester</span>
+        </a>
+        <a class="nav-item" id="createTicketNav" href="services.html">
+          <span class="material-symbols-outlined">add_circle</span>
+          <span>Create Ticket</span>
+        </a>
+        <!-- <a class="nav-item active" href="#">
+          <span class="material-symbols-outlined">inbox</span>
+          <span>Staff Queue</span>
+        </a>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">analytics</span>
+          <span>Admin Executive</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Service Requests</span>
+        </div>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">folder_open</span>
+          <span>All Requests</span>
+        </a> -->
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">fact_check</span>
+          <span>My Approvals</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Operations</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">timer</span>
+          <span>Workflow & SLA</span>
+        </a>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">corporate_fare</span>
+          <span>Departments</span>
+        </a> -->
+
+        <div class="nav-section">
+          <span class="nav-section-title">Intelligence</span>
+        </div>
+        <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">insights</span>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section">
+          <span class="nav-section-title">Administration</span>
+        </div>
+        <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
+          <span class="material-symbols-outlined">groups</span>
+          <span>User Management</span>
+        </a>
+        <!-- <a class="nav-item" href="#">
+          <span class="material-symbols-outlined">history</span>
+          <span>Audit Logs</span>
+        </a> -->
+        <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </nav>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span>
+          <span class="status-text">System Version</span>
+        </div>
+        <span class="version-text">v0.0.1</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="search-container">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input class="search-input" placeholder="Search requests, ticket #, or citizens..." type="text"/>
+      </div>
+      
+      <div class="header-actions">
+        <a class="btn-primary" href="services.html">
+          <span class="material-symbols-outlined">add</span>
+          <span>New Request</span>
+        </a>
+        <div class="vertical-divider"></div>
+        
+        <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+          <span class="avatar-container">
+            <img alt="Profile" class="avatar-img" src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ad1189f&is=6acfc71f&hm=94b519c1863c78e8c7ce77b9092ef8552b444a8699d5378897a534d8ee081471&"/>
+            <span class="avatar-status"></span>
+          </span>
+          <span class="profile-info">
+            <span class="profile-name">Loading...</span>
+            <span class="profile-role"></span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Dashboard Area -->
+    <main class="dashboard-content">
+      <div class="services-wrapper">
+        
+        
+
+        <!-- Header / Welcoming Greeting[cite: 3] -->
+        <div class="services-header-section">
+          <h1 class="services-title">Submit a Service Request</h1>
+          <p class="services-desc">Select a reporting category below to file an incident or report an issue across municipal facilities and services.</p>
+        </div>
+
+        <!-- Clean, Prominent Search Bar[cite: 3] -->
+        <div class="services-search-bar">
+          <span class="material-symbols-outlined search-icon-large">search</span>
+          <input class="search-input-large" placeholder="Search for an issue, category, or service (e.g. elevator, broken light, lost keys)..." type="text"/>
+        </div>
+
+        <!-- Clean, Prominent Category Reporting Cards[cite: 3] -->
+        <div class="services-grid">
+          
+          <!-- Card 1: Facility Faults[cite: 3] -->
+          <div class="service-card group-primary">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-primary-light text-primary">
+                <span class="material-symbols-outlined">apartment</span>
+              </div>
+              <h3 class="service-card-title">Facility Faults</h3>
+              <p class="service-card-desc">Plumbing, electrical, structural, HVAC, and building issues.</p>
+            </div>
+            <a class="service-card-btn text-primary" href="facility_faults.html">
+              <span>Report Facility Fault</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 2: Damaged Equipment & Fleet[cite: 3] -->
+          <div class="service-card group-secondary">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-secondary-light text-secondary">
+                <span class="material-symbols-outlined">local_shipping</span>
+              </div>
+              <h3 class="service-card-title">Damaged Equipment &amp; Fleet</h3>
+              <p class="service-card-desc">Municipal vehicles, tools, machinery, and equipment breakdowns.</p>
+            </div>
+            <a class="service-card-btn text-secondary" href="damaged_equipment.html">
+              <span>Report Equipment Damage</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 3: Security Concerns[cite: 3] -->
+          <div class="service-card group-error">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-error-light text-error">
+                <span class="material-symbols-outlined">shield</span>
+              </div>
+              <h3 class="service-card-title">Security Concerns</h3>
+              <p class="service-card-desc">Access badge issues, physical security breaches, and safety hazards.</p>
+            </div>
+            <a class="service-card-btn text-error" href="security_concerns.html">
+              <span>Report Security Concern</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 4: IT Support[cite: 3] -->
+          <div class="service-card group-primary">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-primary-light text-primary">
+                <span class="material-symbols-outlined">laptop</span>
+              </div>
+              <h3 class="service-card-title">IT Support</h3>
+              <p class="service-card-desc">GovID logins, software access, workstation hardware, and network issues.</p>
+            </div>
+            <a class="service-card-btn text-primary" href="it_support.html">
+              <span>Report IT Issue</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 5: General Maintenance[cite: 3] -->
+          <div class="service-card group-secondary">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-secondary-light text-secondary">
+                <span class="material-symbols-outlined">cleaning_services</span>
+              </div>
+              <h3 class="service-card-title">General Maintenance</h3>
+              <p class="service-card-desc">Restroom supplies, lighting repairs, routine trades, and custodial upkeep.</p>
+            </div>
+            <a class="service-card-btn text-secondary" href="maintenance_request.html">
+              <span>Report Maintenance</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 6: Lost & Found Property[cite: 3] -->
+          <div class="service-card group-tertiary">
+            <div class="service-card-content">
+              <div class="service-card-icon bg-tertiary-light text-tertiary">
+                <span class="material-symbols-outlined">inventory_2</span>
+              </div>
+              <h3 class="service-card-title">Lost &amp; Found Property</h3>
+              <p class="service-card-desc">Report lost citizen items, misplaced valuables, or transit property.</p>
+            </div>
+            <a class="service-card-btn text-tertiary" href="lost_property.html">
+              <span>Report Lost Property</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+          <!-- Card 7: Other & General Inquiries[cite: 3] -->
+          <div class="service-card span-full group-primary flex-row">
+            <div class="flex-row-content">
+              <div class="service-card-icon bg-primary-light text-primary shrink-0">
+                <span class="material-symbols-outlined">live_help</span>
+              </div>
+              <div>
+                <h3 class="service-card-title">Other &amp; General Inquiries</h3>
+                <p class="service-card-desc">Cross-departmental requests, public petitions, and uncategorized matters.</p>
+              </div>
+            </div>
+            <a class="service-card-btn text-primary shrink-0" href="general_request.html">
+              <span>Report General Inquiry</span>
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Clean Footer[cite: 3] -->
+        <div class="services-footer">
+          <div class="footer-brand">
+            <span class="material-symbols-outlined text-secondary">verified_user</span>
+            <span>CivicConnect Municipal Services Portal</span>
+          </div>
+          <div class="footer-links">
+            <a href="#">Service Guidelines</a>
+            <a href="#">Accessibility</a>
+            <a href="#">Privacy &amp; Terms</a>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+  <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+    <form id="accountSettingsForm">
+      <div class="user-dialog-header">
+        <div>
+          <p class="user-dialog-eyebrow">My account</p>
+          <h2 id="accountSettingsTitle">Account settings</h2>
+        </div>
+        <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="user-dialog-fields account-dialog-fields">
+        <label>First name<input id="accountFullName" name="full_name" type="text" maxlength="100" autocomplete="given-name" required></label>
+        <label>Surname<input id="accountSurname" name="full_surname" type="text" maxlength="100" autocomplete="family-name"></label>
+        <label class="user-dialog-wide">Email<input id="accountEmail" name="email" type="email" maxlength="150" autocomplete="email" required></label>
+      </div>
+      <div class="account-password-section">
+        <h3>Change password</h3>
+        <p>Leave these fields blank to keep your current password. New passwords must meet the configured strength requirement.</p>
+        <div class="user-dialog-fields account-dialog-fields">
+          <label class="user-dialog-wide">Current password<input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password"></label>
+          <label>New password<input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password"></label>
+          <label>Confirm new password<input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password"></label>
+        </div>
+      </div>
+      <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+      <div class="user-dialog-actions">
+        <button class="user-dialog-signout" id="accountSignOut" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">logout</span>
+          Sign out
+        </button>
+        <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+        <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+  <script type="module">
+    import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    void initializeUserNavigation();
+  </script>
+  <script type="module">
+    const searchInput = document.querySelector(".search-input-large");
+    const serviceCards = Array.from(document.querySelectorAll(".service-card"));
+    searchInput?.addEventListener("input", () => {
+      const query = searchInput.value.trim().toLocaleLowerCase();
+      serviceCards.forEach((card) => {
+        card.hidden = !card.textContent?.toLocaleLowerCase().includes(query);
+      });
+    });
+  </script>
+</body>
+</html>

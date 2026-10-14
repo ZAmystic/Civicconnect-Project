@@ -1,3 +1,28 @@
 {
-    "minimum_password_strength_level": 3
+  "general": {
+    "site_name": "CivicConnect",
+    "site_description": "Community Management Platform",
+    "default_language": "en",
+    "default_timezone": "Africa/Johannesburg",
+    "date_format": "YYYY-MM-DD"
+  },
+  "security": {
+    "minimum_password_strength_level": 3,
+    "session_timeout_minutes": 30,
+    "max_login_attempts": 5
+  },
+  "users": {
+    "allow_user_registration": true,
+    "default_user_role": "Citizen",
+    "allow_profile_editing": true
+  },
+  "audit": {
+    "enable_audit_logging": false,
+    "log_failed_login_attempts": true,
+    "audit_log_retention_days": 90
+  },
+  "permissions": {
+    "allow_staff_user_management": true,
+    "allow_staff_settings_access": true
+  }
 }
