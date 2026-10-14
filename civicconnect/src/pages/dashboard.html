@@ -260,6 +260,7 @@
       <div>
         <span class="request-detail-label">Current status</span>
         <span class="request-status" id="requestDetailsStatus"></span>
+        <p class="request-detail-status-message" id="requestDetailsStatusMessage"></p>
       </div>
       <div>
         <span class="request-detail-label">Submitted</span>
@@ -270,10 +271,46 @@
         <strong id="requestDetailsUpdated"></strong>
       </div>
     </section>
+    <div class="request-edit-actions">
+      <button class="history-link request-cancel-button" id="cancelRequestDetails" type="button" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">cancel</span>
+        Cancel request
+      </button>
+      <button class="history-link" id="editRequestDetails" type="button" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+        Edit request details
+      </button>
+    </div>
     <section class="request-detail-section" aria-labelledby="requestDetailSectionTitle">
       <h3 id="requestDetailSectionTitle">Request details</h3>
       <dl class="request-detail-fields" id="requestDetailsFields"></dl>
     </section>
+  </dialog>
+
+  <dialog class="request-dialog request-edit-dialog" id="requestEditDialog" aria-labelledby="requestEditTitle">
+    <form id="requestEditForm">
+      <div class="request-dialog-header">
+        <div>
+          <p class="request-dialog-eyebrow">Submitted request</p>
+          <h2 id="requestEditTitle">Correct request details</h2>
+          <p class="request-dialog-intro">You can edit this request only while it is awaiting review.</p>
+        </div>
+        <button class="request-dialog-close" id="closeRequestEdit" type="button" aria-label="Close edit request dialog">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="request-edit-content">
+        <div class="request-edit-fields" id="requestEditFields"></div>
+        <p class="request-edit-message" id="requestEditMessage" role="status" aria-live="polite"></p>
+        <div class="request-edit-footer">
+          <span>Changes are recorded in the audit log.</span>
+          <div>
+            <button class="user-dialog-cancel" id="cancelRequestEdit" type="button">Cancel</button>
+            <button class="user-dialog-save" id="saveRequestEdit" type="submit">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </form>
   </dialog>
 
   <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">

@@ -91,8 +91,9 @@ function renderLogs(logs: AuditLog[]): void {
         const statusCell = document.createElement("td");
         const status = document.createElement("span");
         status.className = "audit-log-status";
-        status.textContent =
-            `${formatStatus(log.previous_status)} to ${formatStatus(log.new_status)}`;
+        status.textContent = log.previous_status === log.new_status
+            ? `${formatStatus(log.new_status)} · details updated`
+            : `${formatStatus(log.previous_status)} to ${formatStatus(log.new_status)}`;
         statusCell.append(status);
 
         row.append(
