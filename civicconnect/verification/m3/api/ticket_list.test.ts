@@ -2,6 +2,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vites
 
 const mocks = vi.hoisted(() => ({
     hasUserManagementAccess: vi.fn(),
+    hasContractorAccess: vi.fn(),
+    hasAdminAccess: vi.fn(),
     getSessionUserId: vi.fn(),
     sendTicketChangeNotification: vi.fn(),
     query: vi.fn(),
@@ -10,6 +12,8 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("../../../src/auth/user_session", () => ({
     hasAuditLogAccess: mocks.hasUserManagementAccess,
+    hasContractorAccess: mocks.hasContractorAccess,
+    hasAdminAccess: mocks.hasAdminAccess,
     getSessionUserId: mocks.getSessionUserId
 }));
 
@@ -60,6 +64,8 @@ beforeEach(() => {
     transactionCalls = [];
     releaseTicketClient = vi.fn();
     mocks.hasUserManagementAccess.mockResolvedValue(true);
+    mocks.hasContractorAccess.mockResolvedValue(false);
+    mocks.hasAdminAccess.mockResolvedValue(false);
     mocks.getSessionUserId.mockReturnValue(42);
     mocks.sendTicketChangeNotification.mockResolvedValue(undefined);
     mocks.connect.mockResolvedValue({
@@ -74,6 +80,9 @@ beforeEach(() => {
                         requester_email: "alex@example.test"
                     }]
                 };
+            }
+            if (normalizedSql.startsWith("SELECT contractor_user_id")) {
+                return { rows: [{ contractor_user_id: 42 }] };
             }
             if (normalizedSql.startsWith('UPDATE "Ticket"')) {
                 return { rows: [{ status: "In_Progress" }] };
@@ -150,6 +159,130 @@ describe("ticket administration API", () => {
         expect(response.status).toBe(400);
         expect((await response.json()).success).toBe(false);
         expect(mocks.query).not.toHaveBeenCalled();
+    });
+
+    it("[API-13] lists only the signed-in contractor's assigned tickets", async () => {
+        mocks.hasUserManagementAccess.mockResolvedValue(false);
+        mocks.hasContractorAccess.mockResolvedValue(true);
+
+        const response = await fetch(
+            `${baseUrl}/api/tickets/assigned?page=1&search=Alex&status=Submitted`
+        );
+        const body = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(body).toMatchObject({
+            success: true,
+            tickets: [{ tracking_ref: "TCK-F-2026-1001" }],
+            pagination: { page: 1, total: 1 }
+        });
+        expect(mocks.query.mock.calls[0][0]).toContain("assignment.contractor_user_id = $1");
+        expect(mocks.query.mock.calls[0][1]).toEqual([42, "%Alex%", "Submitted"]);
+    });
+
+    it("[API-14] denies users without an active Contractor role from assigned tickets", async () => {
+        mocks.hasUserManagementAccess.mockResolvedValue(false);
+        mocks.hasContractorAccess.mockResolvedValue(false);
+
+        const response = await fetch(`${baseUrl}/api/tickets/assigned`);
+
+        expect(response.status).toBe(403);
+        expect((await response.json()).success).toBe(false);
+        expect(mocks.query).not.toHaveBeenCalled();
+    });
+
+    it("[API-17] lets Admins view all active contractor assignments", async () => {
+        mocks.hasUserManagementAccess.mockResolvedValue(true);
+        mocks.hasAdminAccess.mockResolvedValue(true);
+
+        const response = await fetch(`${baseUrl}/api/tickets/assigned`);
+        const body = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(body).toMatchObject({
+            success: true,
+            viewMode: "admin",
+            tickets: [{ tracking_ref: "TCK-F-2026-1001" }]
+        });
+        expect(mocks.query.mock.calls[0][0]).toContain(
+            "assignment.completion_status NOT IN ('Completed', 'Failed')"
+        );
+        expect(mocks.query.mock.calls[0][0]).not.toContain(
+            "assignment.contractor_user_id = $1"
+        );
+    });
+
+    it("[API-15] lets a contractor update their assigned ticket and emails its requester", async () => {
+        mocks.hasUserManagementAccess.mockResolvedValue(false);
+        mocks.hasContractorAccess.mockResolvedValue(true);
+
+        const response = await fetch(`${baseUrl}/api/tickets/12/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                status: "In_Progress",
+                reason: "Work has started on the reported fault."
+            })
+        });
+        const body = await response.json();
+
+        expect(response.status).toBe(200);
+        expect(body).toMatchObject({
+            success: true,
+            ticket: { ticket_id: "12", status: "In_Progress" },
+            notification: { sent: true }
+        });
+        expect(transactionCalls.map(({ sql }) => sql)).toEqual([
+            "BEGIN",
+            expect.stringContaining('FROM "Ticket" AS ticket'),
+            expect.stringContaining("SELECT contractor_user_id"),
+            expect.stringContaining('UPDATE "Ticket"'),
+            expect.stringContaining('INSERT INTO "AuditLog"'),
+            "COMMIT"
+        ]);
+        expect(mocks.sendTicketChangeNotification).toHaveBeenCalledWith({
+            recipientEmail: "alex@example.test",
+            trackingReference: "TCK-F-2026-1001",
+            changes: [
+                "Status changed from Submitted to In Progress. Reason: Work has started on the reported fault."
+            ]
+        });
+    });
+
+    it("[API-16] prevents contractors from changing tickets assigned to someone else", async () => {
+        mocks.hasUserManagementAccess.mockResolvedValue(false);
+        mocks.hasContractorAccess.mockResolvedValue(true);
+        const query = vi.fn(async (sql: string, params: unknown[] = []) => {
+            const normalizedSql = sql.replace(/\s+/g, " ").trim();
+            transactionCalls.push({ sql: normalizedSql, params });
+            if (normalizedSql.startsWith("SELECT ticket.status")) {
+                return {
+                    rows: [{
+                        status: "Submitted",
+                        tracking_ref: "TCK-F-2026-1001",
+                        requester_email: "alex@example.test"
+                    }]
+                };
+            }
+            if (normalizedSql.startsWith("SELECT contractor_user_id")) {
+                return { rows: [{ contractor_user_id: 77 }] };
+            }
+            return { rows: [] };
+        });
+        mocks.connect.mockResolvedValue({ query, release: releaseTicketClient });
+
+        const response = await fetch(`${baseUrl}/api/tickets/12/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                status: "In_Progress",
+                reason: "Work has started on the reported fault."
+            })
+        });
+
+        expect(response.status).toBe(403);
+        expect(transactionCalls.at(-1)?.sql).toBe("ROLLBACK");
+        expect(mocks.sendTicketChangeNotification).not.toHaveBeenCalled();
     });
 
     it("[API-08] updates status and records the actor and reason in the audit log transaction", async () => {
@@ -236,7 +369,13 @@ describe("ticket administration API", () => {
                     };
                 }
                 if (normalizedSql.startsWith('SELECT user_id, CONCAT_WS')) {
-                    return { rows: [{ user_id: 88, full_name: "Contractor One" }] };
+                    return {
+                        rows: [{
+                            user_id: 88,
+                            full_name: "Contractor One",
+                            email: "contractor@example.test"
+                        }]
+                    };
                 }
                 if (normalizedSql.startsWith('UPDATE "Ticket"')) {
                     return { rows: [{ status: "In_Progress" }] };
@@ -274,7 +413,7 @@ describe("ticket administration API", () => {
             expect.stringContaining('INSERT INTO "AuditLog"'),
             "COMMIT"
         ]);
-        expect(mocks.sendTicketChangeNotification).toHaveBeenCalledWith({
+        expect(mocks.sendTicketChangeNotification).toHaveBeenNthCalledWith(1, {
             recipientEmail: "alex@example.test",
             trackingReference: "TCK-F-2026-1001",
             changes: [
@@ -282,7 +421,62 @@ describe("ticket administration API", () => {
                 "Contractor assigned: Contractor One."
             ]
         });
+        expect(mocks.sendTicketChangeNotification).toHaveBeenNthCalledWith(2, {
+            recipientEmail: "contractor@example.test",
+            trackingReference: "TCK-F-2026-1001",
+            changes: [
+                "Status changed from Submitted to In Progress. Reason: Contractor dispatched to begin the repair.",
+                "Contractor assigned: Contractor One."
+            ]
+        });
         expect(combinedUpdateClient.release).toHaveBeenCalledOnce();
+    });
+
+    it("[API-18] sends assignment-only notifications to both requester and contractor", async () => {
+        const assignmentClient = {
+            query: vi.fn(async (sql: string) => {
+                const normalizedSql = sql.replace(/\s+/g, " ").trim();
+                transactionCalls.push({ sql: normalizedSql, params: [] });
+                if (normalizedSql.startsWith("SELECT ticket.status")) {
+                    return {
+                        rows: [{
+                            status: "Submitted",
+                            tracking_ref: "TCK-F-2026-1001",
+                            requester_email: "alex@example.test"
+                        }]
+                    };
+                }
+                if (normalizedSql.startsWith('SELECT user_id,')) {
+                    return {
+                        rows: [{
+                            user_id: 88,
+                            full_name: "Contractor One",
+                            email: "contractor@example.test"
+                        }]
+                    };
+                }
+                return { rows: [] };
+            }),
+            release: vi.fn()
+        };
+        mocks.connect.mockResolvedValue(assignmentClient);
+
+        const response = await fetch(`${baseUrl}/api/tickets/12/status`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: "Submitted", contractorId: 88 })
+        });
+
+        expect(response.status).toBe(200);
+        expect(await response.json()).toMatchObject({
+            success: true,
+            notification: { sent: true }
+        });
+        expect(mocks.sendTicketChangeNotification).toHaveBeenCalledTimes(2);
+        expect(mocks.sendTicketChangeNotification.mock.calls.map(([notification]) =>
+            notification.recipientEmail
+        )).toEqual(["alex@example.test", "contractor@example.test"]);
+        expect(assignmentClient.release).toHaveBeenCalledOnce();
     });
 
     it("[API-12] reports email delivery failures without discarding a saved ticket change", async () => {

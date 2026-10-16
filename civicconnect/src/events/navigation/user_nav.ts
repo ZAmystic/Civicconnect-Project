@@ -6,6 +6,7 @@ interface CurrentUserResponse {
         email: string;
         role: string;
         canManageUsers: boolean;
+        canViewContractorDashboard: boolean;
         canViewAuditLogs: boolean;
     };
 }
@@ -15,6 +16,7 @@ interface CachedNavigationUser {
     full_surname: string | null;
     role: string;
     canManageUsers: boolean;
+    canViewContractorDashboard: boolean;
     canViewAuditLogs: boolean;
 }
 
@@ -46,6 +48,8 @@ function readCachedNavigationUser(): CachedNavigationUser | null {
             typeof value.role !== "string" ||
             !("canManageUsers" in value) ||
             typeof value.canManageUsers !== "boolean" ||
+            !("canViewContractorDashboard" in value) ||
+            typeof value.canViewContractorDashboard !== "boolean" ||
             !("canViewAuditLogs" in value) ||
             typeof value.canViewAuditLogs !== "boolean"
         ) {
@@ -56,6 +60,7 @@ function readCachedNavigationUser(): CachedNavigationUser | null {
             full_surname: value.full_surname,
             role: value.role,
             canManageUsers: value.canManageUsers,
+            canViewContractorDashboard: value.canViewContractorDashboard,
             canViewAuditLogs: value.canViewAuditLogs
         };
     } catch {
@@ -176,6 +181,64 @@ export async function initializeUserNavigation(): Promise<void> {
         ticketManagementLink.href = "ticket_management.html";
         ticketManagementLink.hidden = true;
     }
+    let contractorDashboardLink = document.querySelector<HTMLAnchorElement>(
+        "#contractorDashboardNav"
+    );
+    if (!contractorDashboardLink && navigation) {
+        contractorDashboardLink = document.createElement("a");
+        contractorDashboardLink.className = "nav-item";
+        contractorDashboardLink.id = "contractorDashboardNav";
+        contractorDashboardLink.innerHTML =
+            '<span class="material-symbols-outlined" aria-hidden="true">engineering</span><span>Contractor Dashboard</span>';
+        const operationsSection = Array.from(
+            navigation.querySelectorAll<HTMLElement>(".nav-section")
+        ).find((section) =>
+            section.querySelector(".nav-section-title")?.textContent?.trim() === "Operations"
+        );
+        if (ticketManagementLink && operationsSection) {
+            ticketManagementLink.insertAdjacentElement("afterend", contractorDashboardLink);
+        } else if (operationsSection) {
+            operationsSection.insertAdjacentElement("afterend", contractorDashboardLink);
+        } else {
+            navigation.append(contractorDashboardLink);
+        }
+    }
+    if (contractorDashboardLink) {
+        contractorDashboardLink.href = "contractor_dashboard.html";
+        contractorDashboardLink.hidden = true;
+    }
+    let reportsAnalyticsLink = document.querySelector<HTMLAnchorElement>(
+        "#reportsAnalyticsNav"
+    );
+    if (!reportsAnalyticsLink && navigation) {
+        reportsAnalyticsLink = Array.from(
+            navigation.querySelectorAll<HTMLAnchorElement>(".nav-item")
+        ).find((link) =>
+            link.querySelector("span:last-child")?.textContent?.trim() === "Reports & Analytics"
+        ) ?? null;
+    }
+    if (!reportsAnalyticsLink && navigation) {
+        reportsAnalyticsLink = document.createElement("a");
+        reportsAnalyticsLink.className = "nav-item";
+        reportsAnalyticsLink.id = "reportsAnalyticsNav";
+        reportsAnalyticsLink.innerHTML =
+            '<span class="material-symbols-outlined" aria-hidden="true">insights</span><span>Reports &amp; Analytics</span>';
+        const intelligenceSection = Array.from(
+            navigation.querySelectorAll<HTMLElement>(".nav-section")
+        ).find((section) =>
+            section.querySelector(".nav-section-title")?.textContent?.trim() === "Intelligence"
+        );
+        if (intelligenceSection) {
+            intelligenceSection.insertAdjacentElement("afterend", reportsAnalyticsLink);
+        } else {
+            navigation.append(reportsAnalyticsLink);
+        }
+    }
+    if (reportsAnalyticsLink) {
+        reportsAnalyticsLink.id = "reportsAnalyticsNav";
+        reportsAnalyticsLink.href = "reports_analytics.html";
+        reportsAnalyticsLink.hidden = true;
+    }
     const updateAdministrationSection = (): void => {
         if (administrationSection) {
             administrationSection.hidden = ![
@@ -199,10 +262,16 @@ export async function initializeUserNavigation(): Promise<void> {
     const requiresAuditLogAccess = currentPath.endsWith("/aduit_logs.html");
     const requiresTicketManagementAccess =
         currentPath.endsWith("/ticket_management.html");
+    const requiresContractorDashboardAccess =
+        currentPath.endsWith("/contractor_dashboard.html");
+    const requiresReportsAnalyticsAccess =
+        currentPath.endsWith("/reports_analytics.html");
     const requiresProtectedPageAccess =
         requiresUserManagementAccess ||
         requiresAuditLogAccess ||
-        requiresTicketManagementAccess;
+        requiresTicketManagementAccess ||
+        requiresContractorDashboardAccess ||
+        requiresReportsAnalyticsAccess;
 
     const servicePages = [
         { href: "facility_faults.html", icon: "apartment", label: "Facility Faults" },
@@ -273,6 +342,12 @@ export async function initializeUserNavigation(): Promise<void> {
         if (ticketManagementLink) {
             ticketManagementLink.hidden = !user.canViewAuditLogs;
         }
+        if (contractorDashboardLink) {
+            contractorDashboardLink.hidden = !user.canViewContractorDashboard;
+        }
+        if (reportsAnalyticsLink) {
+            reportsAnalyticsLink.hidden = !user.canViewAuditLogs;
+        }
         updateAdministrationSection();
     };
 
@@ -340,8 +415,12 @@ export async function initializeUserNavigation(): Promise<void> {
         signedInUser = data.user;
         if (
             (requiresUserManagementAccess && !data.user.canManageUsers) ||
-            ((requiresAuditLogAccess || requiresTicketManagementAccess) &&
-                !data.user.canViewAuditLogs)
+            ((requiresAuditLogAccess ||
+                requiresTicketManagementAccess ||
+                requiresReportsAnalyticsAccess) &&
+                !data.user.canViewAuditLogs) ||
+            (requiresContractorDashboardAccess &&
+                !data.user.canViewContractorDashboard)
         ) {
             redirectToNotFound();
             return;
@@ -353,6 +432,7 @@ export async function initializeUserNavigation(): Promise<void> {
             full_surname: data.user.full_surname,
             role: data.user.role,
             canManageUsers: data.user.canManageUsers,
+            canViewContractorDashboard: data.user.canViewContractorDashboard,
             canViewAuditLogs: data.user.canViewAuditLogs
         });
     } catch (error) {
@@ -502,6 +582,7 @@ export async function initializeUserNavigation(): Promise<void> {
                 full_surname: signedInUser.full_surname,
                 role: signedInUser.role,
                 canManageUsers: signedInUser.canManageUsers,
+                canViewContractorDashboard: signedInUser.canViewContractorDashboard,
                 canViewAuditLogs: signedInUser.canViewAuditLogs
             });
             if (nameElement) {

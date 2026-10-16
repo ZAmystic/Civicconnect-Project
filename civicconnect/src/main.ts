@@ -5,6 +5,7 @@ import facilityFaultRoutes from "./routes/facility_fault_routes";
 import requestRoutes from "./routes/request_routes";
 import auditLogRoutes from "./routes/audit_log_routes";
 import ticketRoutes from "./routes/ticket_routes";
+import reportRoutes from "./routes/report_routes";
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/api/facility-faults", facilityFaultRoutes);
 app.use("/api/requests", requestRoutes);
 app.use("/api/audit-logs", auditLogRoutes);
 app.use("/api/tickets", ticketRoutes);
+app.use("/api/reports", reportRoutes);
 
 // Basic API health check
 app.get("/api/health", (_req, res) => {

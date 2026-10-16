@@ -195,3 +195,63 @@ export async function hasAuditLogAccess(req: Request): Promise<boolean> {
 
     return isActive && ["Staff", "Manager", "Admin"].includes(user.role);
 }
+
+export async function hasContractorAccess(req: Request): Promise<boolean> {
+    const userId = getSessionUserId(req);
+    if (userId === null) {
+        return false;
+    }
+
+    const result = await dbPool.query<{
+        role: string;
+        account_status: boolean | string;
+    }>(
+        `
+        SELECT role, account_status
+        FROM "User"
+        WHERE user_id = $1
+        `,
+        [userId]
+    );
+    const user = result.rows[0];
+
+    if (!user) {
+        return false;
+    }
+
+    const isActive = user.account_status === true ||
+        String(user.account_status).toLowerCase() === "active" ||
+        String(user.account_status).toLowerCase() === "true";
+
+    return isActive && user.role === "Contractor";
+}
+
+export async function hasAdminAccess(req: Request): Promise<boolean> {
+    const userId = getSessionUserId(req);
+    if (userId === null) {
+        return false;
+    }
+
+    const result = await dbPool.query<{
+        role: string;
+        account_status: boolean | string;
+    }>(
+        `
+        SELECT role, account_status
+        FROM "User"
+        WHERE user_id = $1
+        `,
+        [userId]
+    );
+    const user = result.rows[0];
+
+    if (!user) {
+        return false;
+    }
+
+    const isActive = user.account_status === true ||
+        String(user.account_status).toLowerCase() === "active" ||
+        String(user.account_status).toLowerCase() === "true";
+
+    return isActive && user.role === "Admin";
+}

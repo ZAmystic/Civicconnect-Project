@@ -26,16 +26,13 @@
       <nav class="sidebar-nav">
         <div class="nav-section"><span class="nav-section-title">Dashboards</span></div>
         <a class="nav-item" id="requesterNav" href="dashboard.html">
-          <span class="material-symbols-outlined" aria-hidden="true">person</span><span>Requester</span>
+          <span class="material-symbols-outlined" aria-hidden="true">person</span><span>My requests</span>
         </a>
         <a class="nav-item" id="createTicketNav" href="services.html">
           <span class="material-symbols-outlined" aria-hidden="true">add_circle</span><span>Create Ticket</span>
         </a>
         <div class="nav-section"><span class="nav-section-title">Service Requests</span></div>
         <div class="nav-section"><span class="nav-section-title">Operations</span></div>
-        <a class="nav-item" href="#">
-          <span class="material-symbols-outlined" aria-hidden="true">timer</span><span>Workflow &amp; SLA</span>
-        </a>
         <div class="nav-section"><span class="nav-section-title">Intelligence</span></div>
         <a class="nav-item" href="#">
           <span class="material-symbols-outlined" aria-hidden="true">insights</span><span>Reports &amp; Analytics</span>
@@ -54,7 +51,7 @@
         <div class="status-indicator">
           <span class="status-dot"></span><span class="status-text">System Version</span>
         </div>
-        <span class="version-text">v0.0.1</span>
+        <span class="version-text">v1.0.0</span>
       </div>
     </div>
   </aside>
@@ -106,6 +103,7 @@
             <option value="Resolved">Resolved</option>
             <option value="Closed">Closed</option>
             <option value="Rejected">Rejected</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
         </div>
         <p class="ticket-admin-message" id="ticketAdminMessage" role="status" aria-live="polite"></p>
@@ -159,6 +157,7 @@
             <option value="Resolved">Resolved</option>
             <option value="Closed">Closed</option>
             <option value="Rejected">Rejected</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
         </label>
         <label>

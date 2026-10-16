@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <link rel="icon" type="image/svg+xml" href="/logo.svg"/>
+  <title>CivicConnect Reports &amp; Analytics</title>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/dashboard.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/reports_analytics.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/account_dialog.css"/>
+  <link rel="stylesheet" href="/src/pages/assets/css/scrollbar.css"/>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <img alt="CivicConnect Logo" class="logo-img" src="/logo.svg"/>
+          <span class="logo-title">CivicConnect</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section"><span class="nav-section-title">Dashboards</span></div>
+        <a class="nav-item" id="requesterNav" href="dashboard.html">
+          <span class="material-symbols-outlined" aria-hidden="true">person</span><span>My Requests</span>
+        </a>
+        <a class="nav-item" id="createTicketNav" href="services.html">
+          <span class="material-symbols-outlined" aria-hidden="true">add_circle</span><span>Create Ticket</span>
+        </a>
+        <div class="nav-section"><span class="nav-section-title">Service Requests</span></div>
+        <div class="nav-section"><span class="nav-section-title">Operations</span></div>
+        <div class="nav-section"><span class="nav-section-title">Intelligence</span></div>
+        <a class="nav-item" id="reportsAnalyticsNav" href="reports_analytics.html" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">insights</span><span>Reports &amp; Analytics</span>
+        </a>
+        <div class="nav-section"><span class="nav-section-title">Administration</span></div>
+        <a class="nav-item" id="userManagementNav" href="user_management.html" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">groups</span><span>User Management</span>
+        </a>
+        <a class="nav-item" id="settingsNav" href="settings.html" hidden>
+          <span class="material-symbols-outlined" aria-hidden="true">settings</span><span>Settings</span>
+        </a>
+      </nav>
+    </div>
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <div class="status-indicator">
+          <span class="status-dot"></span><span class="status-text">System Version</span>
+        </div>
+        <span class="version-text">v1.0.0</span>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="report-page-title">
+        <span class="material-symbols-outlined" aria-hidden="true">insights</span>
+        <span>Reports &amp; Analytics</span>
+      </div>
+      <div class="header-actions">
+        <button class="analytics-refresh" id="refreshAnalytics" type="button">
+          <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+          Refresh
+        </button>
+        <div class="vertical-divider"></div>
+        <button class="profile-menu" id="accountProfileButton" type="button" aria-label="Edit your account" aria-haspopup="dialog">
+          <span class="avatar-container">
+            <img alt="Profile" class="avatar-img" src="https://cdn.discordapp.com/attachments/1546164963377287272/1559268683585425418/user_icon.png?ex=6ad1189f&is=6acfc71f&hm=94b519c1863c78e8c7ce77b9092ef8552b444a8699d5378897a534d8ee081471&"/>
+            <span class="avatar-status"></span>
+          </span>
+          <span class="profile-info">
+            <span class="profile-name">Loading...</span><span class="profile-role"></span>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <main class="dashboard-content reports-content">
+      <section class="analytics-page" aria-labelledby="analyticsTitle">
+        <div class="analytics-heading">
+          <div>
+            <p class="analytics-eyebrow">Service performance</p>
+            <h1 id="analyticsTitle">Reports &amp; Analytics</h1>
+            <p class="analytics-intro">An overview of service requests, their categories, and recent activity.</p>
+          </div>
+          <p class="analytics-updated">Counts update when you refresh this page.</p>
+        </div>
+        <p class="analytics-message" id="analyticsMessage" role="status" aria-live="polite">Loading report analytics...</p>
+
+        <div id="analyticsSummary" hidden>
+          <section class="analytics-metrics" aria-label="Report totals">
+            <article class="analytics-metric">
+              <div class="analytics-metric-label"><span>Total reports</span><span class="material-symbols-outlined">description</span></div>
+              <strong id="totalReports">0</strong>
+              <span>All submitted requests</span>
+            </article>
+            <article class="analytics-metric metric-today">
+              <div class="analytics-metric-label"><span>Reports today</span><span class="material-symbols-outlined">today</span></div>
+              <strong id="reportsToday">0</strong>
+              <span>Submitted today</span>
+            </article>
+            <article class="analytics-metric metric-open">
+              <div class="analytics-metric-label"><span>Open reports</span><span class="material-symbols-outlined">pending_actions</span></div>
+              <strong id="openReports">0</strong>
+              <span>Awaiting completion</span>
+            </article>
+            <article class="analytics-metric metric-resolved">
+              <div class="analytics-metric-label"><span>Resolved reports</span><span class="material-symbols-outlined">task_alt</span></div>
+              <strong id="resolvedReports">0</strong>
+              <span>Resolved or closed</span>
+            </article>
+          </section>
+
+          <section class="analytics-panel trend-panel" aria-labelledby="trendTitle">
+            <div class="analytics-panel-heading">
+              <div>
+                <h2 id="trendTitle">Daily reports</h2>
+                <p>Submissions over the last seven days</p>
+              </div>
+            </div>
+            <div class="daily-chart" id="dailyReportsChart" role="img" aria-label="Reports submitted per day over the last seven days"></div>
+          </section>
+
+          <div class="analytics-breakdowns">
+            <section class="analytics-panel" aria-labelledby="categoryTitle">
+              <div class="analytics-panel-heading">
+                <div>
+                  <h2 id="categoryTitle">Reports by category</h2>
+                  <p>All-time report volume for each service category</p>
+                </div>
+              </div>
+              <div class="breakdown-list" id="categoryBreakdown"></div>
+            </section>
+            <section class="analytics-panel" aria-labelledby="statusTitle">
+              <div class="analytics-panel-heading">
+                <div>
+                  <h2 id="statusTitle">Reports by status</h2>
+                  <p>Current distribution of report progress</p>
+                </div>
+              </div>
+              <div class="breakdown-list" id="statusBreakdown"></div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog class="user-dialog account-dialog" id="accountSettingsDialog" aria-labelledby="accountSettingsTitle">
+    <form id="accountSettingsForm">
+      <div class="user-dialog-header">
+        <div>
+          <p class="user-dialog-eyebrow">Your account</p>
+          <h2 id="accountSettingsTitle">Account settings</h2>
+          <p>Update your profile details and password.</p>
+        </div>
+        <button class="user-dialog-close" id="closeAccountSettings" type="button" aria-label="Close account settings">&times;</button>
+      </div>
+      <div class="user-dialog-content">
+        <label for="accountFullName">First name</label>
+        <input id="accountFullName" name="full_name" type="text" required maxlength="100"/>
+        <label for="accountSurname">Surname</label>
+        <input id="accountSurname" name="full_surname" type="text" maxlength="100"/>
+        <label for="accountEmail">Email</label>
+        <input id="accountEmail" name="email" type="email" required/>
+        <label for="accountCurrentPassword">Current password</label>
+        <input id="accountCurrentPassword" name="current_password" type="password" autocomplete="current-password"/>
+        <label for="accountNewPassword">New password</label>
+        <input id="accountNewPassword" name="new_password" type="password" autocomplete="new-password"/>
+        <label for="accountConfirmPassword">Confirm new password</label>
+        <input id="accountConfirmPassword" name="confirm_password" type="password" autocomplete="new-password"/>
+        <p class="user-dialog-message" id="accountSettingsMessage" role="status" aria-live="polite"></p>
+      </div>
+      <div class="user-dialog-footer">
+        <button class="user-dialog-signout" id="accountSignOut" type="button">Sign out</button>
+        <button class="user-dialog-cancel" id="cancelAccountSettings" type="button">Close</button>
+        <button class="user-dialog-save" id="saveAccountSettings" type="submit">Save changes</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module">
+    import { initializeUserNavigation } from "/src/events/navigation/user_nav.ts";
+    import "/src/events/reports/reports_analytics.ts";
+    void initializeUserNavigation();
+  </script>
+</body>
+</html>
