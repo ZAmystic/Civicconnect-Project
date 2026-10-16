@@ -207,6 +207,38 @@ export async function initializeUserNavigation(): Promise<void> {
         contractorDashboardLink.href = "contractor_dashboard.html";
         contractorDashboardLink.hidden = true;
     }
+    let reportsAnalyticsLink = document.querySelector<HTMLAnchorElement>(
+        "#reportsAnalyticsNav"
+    );
+    if (!reportsAnalyticsLink && navigation) {
+        reportsAnalyticsLink = Array.from(
+            navigation.querySelectorAll<HTMLAnchorElement>(".nav-item")
+        ).find((link) =>
+            link.querySelector("span:last-child")?.textContent?.trim() === "Reports & Analytics"
+        ) ?? null;
+    }
+    if (!reportsAnalyticsLink && navigation) {
+        reportsAnalyticsLink = document.createElement("a");
+        reportsAnalyticsLink.className = "nav-item";
+        reportsAnalyticsLink.id = "reportsAnalyticsNav";
+        reportsAnalyticsLink.innerHTML =
+            '<span class="material-symbols-outlined" aria-hidden="true">insights</span><span>Reports &amp; Analytics</span>';
+        const intelligenceSection = Array.from(
+            navigation.querySelectorAll<HTMLElement>(".nav-section")
+        ).find((section) =>
+            section.querySelector(".nav-section-title")?.textContent?.trim() === "Intelligence"
+        );
+        if (intelligenceSection) {
+            intelligenceSection.insertAdjacentElement("afterend", reportsAnalyticsLink);
+        } else {
+            navigation.append(reportsAnalyticsLink);
+        }
+    }
+    if (reportsAnalyticsLink) {
+        reportsAnalyticsLink.id = "reportsAnalyticsNav";
+        reportsAnalyticsLink.href = "reports_analytics.html";
+        reportsAnalyticsLink.hidden = true;
+    }
     const updateAdministrationSection = (): void => {
         if (administrationSection) {
             administrationSection.hidden = ![
@@ -232,11 +264,14 @@ export async function initializeUserNavigation(): Promise<void> {
         currentPath.endsWith("/ticket_management.html");
     const requiresContractorDashboardAccess =
         currentPath.endsWith("/contractor_dashboard.html");
+    const requiresReportsAnalyticsAccess =
+        currentPath.endsWith("/reports_analytics.html");
     const requiresProtectedPageAccess =
         requiresUserManagementAccess ||
         requiresAuditLogAccess ||
         requiresTicketManagementAccess ||
-        requiresContractorDashboardAccess;
+        requiresContractorDashboardAccess ||
+        requiresReportsAnalyticsAccess;
 
     const servicePages = [
         { href: "facility_faults.html", icon: "apartment", label: "Facility Faults" },
@@ -310,6 +345,9 @@ export async function initializeUserNavigation(): Promise<void> {
         if (contractorDashboardLink) {
             contractorDashboardLink.hidden = !user.canViewContractorDashboard;
         }
+        if (reportsAnalyticsLink) {
+            reportsAnalyticsLink.hidden = !user.canViewAuditLogs;
+        }
         updateAdministrationSection();
     };
 
@@ -377,7 +415,9 @@ export async function initializeUserNavigation(): Promise<void> {
         signedInUser = data.user;
         if (
             (requiresUserManagementAccess && !data.user.canManageUsers) ||
-            ((requiresAuditLogAccess || requiresTicketManagementAccess) &&
+            ((requiresAuditLogAccess ||
+                requiresTicketManagementAccess ||
+                requiresReportsAnalyticsAccess) &&
                 !data.user.canViewAuditLogs) ||
             (requiresContractorDashboardAccess &&
                 !data.user.canViewContractorDashboard)
