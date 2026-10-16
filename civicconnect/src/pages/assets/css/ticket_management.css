@@ -90,6 +90,10 @@
   color: #fca5a5;
 }
 
+.ticket-admin-message.success {
+  color: #86efac;
+}
+
 .ticket-table-wrap {
   overflow-x: auto;
   border: 1px solid #334155;

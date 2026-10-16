@@ -65,6 +65,8 @@ router.get("/me", async (req: Request, res: Response) => {
                 email: user.email,
                 role: user.role,
                 canManageUsers: user.role === "Admin" || user.role === "Manager",
+                canViewContractorDashboard:
+                    user.role === "Contractor" || user.role === "Admin",
                 canViewAuditLogs:
                     user.role === "Staff" || user.role === "Manager" || user.role === "Admin"
             }
